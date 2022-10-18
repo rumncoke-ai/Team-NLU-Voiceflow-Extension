@@ -15,7 +15,7 @@ public class TranscriptService{
     @Autowired
     private TranscriptRepository repository;
 
-    public Transcript createTranscript (Transcript transcript) {
+    public Transcript createTranscript(Transcript transcript) {
         return repository.save(transcript);
     }
 

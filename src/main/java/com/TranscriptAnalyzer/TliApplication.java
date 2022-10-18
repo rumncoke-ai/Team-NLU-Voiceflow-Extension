@@ -2,9 +2,19 @@ package com.TranscriptAnalyzer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.Transcript.Analyzer.service,TranscriptService;
+import org.springframework.boot.CommandLineRunner;
+import com.TranscriptAnalyzer.service.TranscriptService;
+import com.TranscriptAnalyzer.documents.Transcript;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.TranscriptAnalyzer.repository.TranscriptRepository;
+
+
 @SpringBootApplication
-public class TliApplication {
+public class TliApplication implements CommandLineRunner {
+
+	@Autowired
+	private TranscriptRepository repository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(TliApplication.class, args);
@@ -13,26 +23,11 @@ public class TliApplication {
 	public void run(String... args) throws Exception {
 
 		// save transcipts
-		createTranscript(new Transcript("Shopping", "I'm looking for the new rare beauty blush"));
+		Transcript transcript = new Transcript("Shopping", "I'm looking for the new rare beauty blush");
+		repository.createTranscript(transcript);
 //		repository.save(new Transcript("Shopping", "I'm looking for the new rare beauty blush"));
 //		repository.save(new Transcript("Hotel", "Please book me a hotel"));
 //		repository.save(new Transcript("Taxi", "Please order me a taxi"));
-
-
-		// fetch all transcripts
-		System.out.println("Transcripts found with findAll():");
-		System.out.println("-------------------------------");
-		for (Transcript transcript : repository.findAll()) {
-			System.out.println(transcript);
-		}
-		System.out.println();
-
-		// fetch an individual customer
-		System.out.println("Transcript found with findByIntent('Hotel'):");
-		System.out.println("--------------------------------");
-		System.out.println(repository.findByIntent("Hotel"));
-	}
-
 }
 
 }
