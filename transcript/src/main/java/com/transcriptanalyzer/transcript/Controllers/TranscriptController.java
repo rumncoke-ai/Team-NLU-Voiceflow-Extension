@@ -14,6 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000/")
 public class TranscriptController {
+    //Add a comment
     @Autowired
     private final TranscriptService transcriptService;
     @GetMapping("/getAll")
