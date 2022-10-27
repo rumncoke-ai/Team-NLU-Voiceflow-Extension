@@ -12,7 +12,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = "http://localhost:3000")
 public class TranscriptController {
     @Autowired
     private final TranscriptService transcriptService;
@@ -21,14 +21,43 @@ public class TranscriptController {
         return transcriptService.getAllTranscripts();
     }
 
-    @GetMapping("/getById/{id}")
+    @GetMapping("/getById/{id}") // this will return just one transcript because we will
+    // make ids unique
     public Optional<Transcript> fetchTranscriptById(@PathVariable String id) {
         return transcriptService.getTranscriptById(id);
+    }
+
+    @GetMapping("/getAllByIntent/{intent}") // this will return a list because
+    // there may be more than one transcript with the same intent
+    public List<Transcript> fetchAllTranscriptsByIntent(@PathVariable String intent) {
+        return transcriptService.getAllTranscriptsByIntent(intent);
     }
 
     @PostMapping("/create")
     public Transcript createTranscript(@RequestBody Transcript transcript) {
         return transcriptService.createTranscript(transcript);
+    }
+
+    @PutMapping("/updateById/{id}")
+    public Transcript updateTranscriptById(@PathVariable String id, @RequestBody Transcript transcript) {
+        return transcriptService.updateTranscriptById(id, transcript);
+    }
+
+    @DeleteMapping("/deleteAll")
+    public void deleteAllTranscripts() {
+        transcriptService.deleteAllTranscripts();
+    }
+
+    @DeleteMapping("/deleteById/{id}") // this will delete just one transcript since
+    // ids are unique
+    public void deleteTranscriptById(@PathVariable String id) {
+        transcriptService.deleteTranscriptById(id);
+    }
+
+    @DeleteMapping("/deleteAllByIntent/{intent}") // this may delete more than one id
+    // since intents are not necessarily unique // FIX THIS
+    public void deleteAllTranscriptsByIntent(@PathVariable String intent) {
+        transcriptService.deleteAllTranscriptsByIntent(intent);
     }
 
 }
