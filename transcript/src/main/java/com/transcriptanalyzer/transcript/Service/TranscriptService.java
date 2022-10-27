@@ -5,6 +5,8 @@ import com.transcriptanalyzer.transcript.Repository.TranscriptRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.net.*;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -39,10 +41,10 @@ public class TranscriptService {
         // key which is stored in an external file.
 
         // Create an object within which you can store JSON string information taken from the Voiceflow API.
-        String jsonString = new String();
+        StringBuilder jsonString = new StringBuilder();
 
         // ArrayList object which will store result of transcript parsing and be returned by method.
-        ArrayList<String> finalParseResults = new ArrayList<String>();
+        ArrayList<String> finalParseResults = new ArrayList<>();
 
         // Define the url to download the transcript from, based on the API key and version number.
         String apiKey = PropertiesReader.getProperty("api-key");
@@ -57,18 +59,27 @@ public class TranscriptService {
         conn.setRequestMethod("GET");
 
         // Read the information from the Voiceflow API into a string.
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()))) {
-            for (String line; (line = reader.readLine()) != null; ) {
-                jsonString += line;
-            }
-        }
+        jsonGetter(jsonString, conn);
 
         // Transform the JSON string into a JSONArray object for parsing and manipulation.
         JSONParser parse = new JSONParser();
-        JSONArray dataArr = (JSONArray) parse.parse(jsonString);
-        int len = dataArr.size();
+        JSONArray dataArr = (JSONArray) parse.parse(jsonString.toString());
 
+        flowIterator(finalParseResults, dataArr);
+        // Return the resulting information.
+        return finalParseResults;
+    }
+
+    private static void jsonGetter(StringBuilder jsonString, HttpURLConnection conn) throws IOException {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(conn.getInputStream()))) {
+            for (String line; (line = reader.readLine()) != null; ) {
+                jsonString.append(line);
+            }
+        }
+    }
+
+    private static void flowIterator(ArrayList<String> finalParseResults, JSONArray dataArr) {
         // Iterate through each flow contained within the transcript array.
         for (Object value : dataArr) {
             JSONArray transcriptTop = (JSONArray) value;
@@ -76,30 +87,36 @@ public class TranscriptService {
             // Store turns which have been found to be meaningful actions or responses
             ArrayList<JSONObject> turnsByKey = new ArrayList<>();
 
-            // Find the turns within the flow which contain meaningful actions (i.e., not set-up or termination)
-            for (Object o : transcriptTop) {
-                JSONObject turn = (JSONObject) o;
-                if (turn.containsKey("type") && turn.get("type").equals("choice")) {
-                    turnsByKey.add(turn);
-                } else if (turn.containsKey("type") && turn.get("type").equals("text")) {
-                    turnsByKey.add(turn);
-                }
+            turnReader(transcriptTop, turnsByKey);
+            accessTurnData(finalParseResults, turnsByKey);
+        }
+    }
 
-            }
-            for (JSONObject item : turnsByKey) {
+    private static void accessTurnData(ArrayList<String> finalParseResults, ArrayList<JSONObject> turnsByKey) {
+        for (JSONObject item : turnsByKey) {
 
-                // Object representing stepping into payloads to access relevet internal information (for content key)
-                JSONObject stepInto = (JSONObject) ((JSONObject) item.get("payload")).get("payload");
+            // Object representing stepping into payloads to access relevent internal information (for content key)
+            JSONObject stepInto = (JSONObject) ((JSONObject) item.get("payload")).get("payload");
 
-                if (stepInto.containsKey("slate")) {
-                    JSONObject slate = (JSONObject) stepInto.get("slate");
-                    String content = slate.get("content").toString();
-                    finalParseResults.add(content);
+            if (stepInto.containsKey("slate")) {
+                JSONObject slate = (JSONObject) stepInto.get("slate");
+                String content = slate.get("content").toString();
+                finalParseResults.add(content);
 
-                }
             }
         }
-        // Return the resulting information.
-        return finalParseResults;
+    }
+
+    private static void turnReader(JSONArray transcriptTop, ArrayList<JSONObject> turnsByKey) {
+        // Find the turns within the flow which contain meaningful actions (i.e., not set-up or termination)
+        for (Object o : transcriptTop) {
+            JSONObject turn = (JSONObject) o;
+            if (turn.containsKey("type") && turn.get("type").equals("choice")) {
+                turnsByKey.add(turn);
+            } else if (turn.containsKey("type") && turn.get("type").equals("text")) {
+                turnsByKey.add(turn);
+            }
+
+        }
     }
 }
