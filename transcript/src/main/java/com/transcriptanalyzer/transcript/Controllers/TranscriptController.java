@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,18 @@ public class TranscriptController {
     @PostMapping("/create")
     public Transcript createTranscript(@RequestBody Transcript transcript) {
         return transcriptService.createTranscript(transcript);
+    }
+
+    @PostMapping("/storeData")
+    public void storeTranscriptData() throws Exception {
+        // Get raw string of transcript contents per turn.
+        ArrayList<String> rawTranscripts = TranscriptService.getJSONContent();
+
+        // Iterate through the turns contained in rawTranscripts and post them to the database.
+        for (String transcriptContent: rawTranscripts) {
+            Transcript currTranscript = new Transcript("", transcriptContent);
+            transcriptService.createTranscript(currTranscript);
+        }
     }
 
 }
