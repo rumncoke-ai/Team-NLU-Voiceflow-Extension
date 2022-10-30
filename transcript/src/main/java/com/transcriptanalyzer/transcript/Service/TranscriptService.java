@@ -94,29 +94,31 @@ public class TranscriptService {
 
     private static void accessTurnData(ArrayList<String> finalParseResults, ArrayList<JSONObject> turnsByKey) {
         for (JSONObject item : turnsByKey) {
+            ArrayList<String> contains = new ArrayList<>();
 
-            // Object representing stepping into payloads to access relevent internal information (for content key)
-            JSONObject stepInto = (JSONObject) ((JSONObject) item.get("payload")).get("payload");
-
-            if (stepInto.containsKey("slate")) {
-                JSONObject slate = (JSONObject) stepInto.get("slate");
-                String content = slate.get("content").toString();
-                finalParseResults.add(content);
-
+            if (item.containsKey("message")) {
+                String message = item.get("message").toString();
+                contains.add("message: " + message);
             }
+
+            if (item.containsKey("intent")) {
+                String intent = item.get("intent").toString();
+                contains.add("intent: " + intent);
+            }
+
+            finalParseResults.add(contains.toString());
         }
     }
 
-    private static void turnReader(JSONArray transcriptTop, ArrayList<JSONObject> turnsByKey) {
+    private static void turnReader (JSONArray transcriptTop, ArrayList < JSONObject > turnsByKey){
         // Find the turns within the flow which contain meaningful actions (i.e., not set-up or termination)
         for (Object o : transcriptTop) {
             JSONObject turn = (JSONObject) o;
-            if (turn.containsKey("type") && turn.get("type").equals("choice")) {
+            if (turn.containsKey("type") && turn.get("type").equals("request")) {
                 turnsByKey.add(turn);
             } else if (turn.containsKey("type") && turn.get("type").equals("text")) {
                 turnsByKey.add(turn);
             }
-
         }
     }
 }

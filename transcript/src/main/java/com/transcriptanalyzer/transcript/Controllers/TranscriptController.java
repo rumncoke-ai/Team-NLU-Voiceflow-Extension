@@ -35,7 +35,7 @@ public class TranscriptController {
     @PostMapping("/storeData")
     public void storeTranscriptData() throws Exception {
         // Get raw string of transcript contents per turn.
-        ArrayList<String> rawTranscripts = transcriptService.getJSONContent();
+        ArrayList<String> rawTranscripts = TranscriptService.getJSONContent();
 
         // Iterate through the turns contained in rawTranscripts and post them to the database.
         for (String transcriptContent: rawTranscripts) {
