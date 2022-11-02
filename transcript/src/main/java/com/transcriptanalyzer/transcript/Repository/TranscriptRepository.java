@@ -10,6 +10,9 @@ public interface TranscriptRepository extends MongoRepository<Transcript, String
 
     List<Transcript> findTranscriptsByIntent(String intent);
 
+    void deleteByIntent(String intent);
+
+
     //@Query("")
     //void test();
 }

@@ -19,7 +19,7 @@ public class TranscriptApplication {
 		SpringApplication.run(TranscriptApplication.class, args);
 	}
 
-//	@Bean
+//	@Bean2
 //	CommandLineRunner runner(
 //			TranscriptRepository repository, MongoTemplate mongoTemplate) {
 //		return args -> {
