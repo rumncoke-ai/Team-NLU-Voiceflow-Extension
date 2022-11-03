@@ -17,8 +17,7 @@ public class Transcript {
     private String intent;
     private String content;
 
-    public Transcript(String id, String intent, String content) {
-        this.id = id;
+    public Transcript(String intent, String content) {
         this.intent = intent;
         this.content = content;
     }
