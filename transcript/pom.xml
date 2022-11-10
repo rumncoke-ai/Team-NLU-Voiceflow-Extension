@@ -11,6 +11,7 @@
 	<groupId>com.transcriptanalyzer</groupId>
 	<artifactId>transcript</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>transcript</name>
 	<description>TLI project transcript analyzer</description>
 	<properties>
