@@ -17,12 +17,12 @@ jobs:
         with:
           java-version: '11'
       - name: Build with Maven
-        run: mvn -B package -DskipTests --file pom.xml
+        run: mvn -B package -DskipTests --file transcript/pom.xml
       - name: Upload JAR
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: target/transcript-0.0.1-SNAPSHOT.jar   
+          path: transcript/target/-0.0.1-SNAPSHOT.jar   
   deploy:
     needs: build
     name: Deploy
