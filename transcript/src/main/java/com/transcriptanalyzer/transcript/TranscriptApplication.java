@@ -1,16 +1,8 @@
 package com.transcriptanalyzer.transcript;
 
-import com.transcriptanalyzer.transcript.Documents.Transcript;
-import com.transcriptanalyzer.transcript.Repository.TranscriptRepository;
-import org.springframework.boot.CommandLineRunner;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.TranscriptRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-
-import java.util.List;
 
 @SpringBootApplication
 public class TranscriptApplication {

@@ -11,6 +11,7 @@
 	<groupId>com.transcriptanalyzer</groupId>
 	<artifactId>transcript</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>transcript</name>
 	<description>TLI project transcript analyzer</description>
 	<properties>
@@ -36,7 +37,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
