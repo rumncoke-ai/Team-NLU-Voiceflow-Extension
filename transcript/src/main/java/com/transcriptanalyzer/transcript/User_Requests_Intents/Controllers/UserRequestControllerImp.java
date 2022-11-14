@@ -1,7 +1,5 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Transcript;
-
 //import the Transcript Service class as something else to implement clean architecture (NOT POSSIBLE IN JAVA)
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.TranscriptService;
 import lombok.AllArgsConstructor;
@@ -14,16 +12,18 @@ import java.util.*;
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
-public class TranscriptController {
+
+public class UserRequestControllerImp implements UserRequestController {
     @Autowired
     private final TranscriptService transcriptService;
 
-    //Function that creates a transcript
+    @Override
     @PostMapping("/storeAPI/Key")
     public void storeAPIKey(@RequestBody String apiKey) {
        transcriptService.storeAPIKey(apiKey);
     }
 
+    @Override
     @PostMapping("/storeAPI/Version")
     public void storeAPIVersion(@RequestBody String apiVersion) {
         transcriptService.storeAPIVersion(apiVersion);
@@ -34,13 +34,10 @@ public class TranscriptController {
 //        return transcriptService.getBestIntent();
 //    }
 
+    @Override
     @GetMapping("/cleanTranscript") // this will return a list
     public List<String> getCleanedTranscript() throws Exception {
         return transcriptService.getJSONContent();
-    }
-    @GetMapping("/test") // this will return a list
-    public String test() {
-        return "Hello World";
     }
 }
 
