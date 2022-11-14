@@ -35,7 +35,7 @@ public class TranscriptController {
 //    }
 
     @GetMapping("/cleanTranscript") // this will return a list
-    public List<String> getCleanedTranscript() throws Exception {
+    public ArrayList<ArrayList<ArrayList<String>>> getCleanedTranscript() throws Exception {
         return transcriptService.getJSONContent();
     }
     @GetMapping("/test") // this will return a list
