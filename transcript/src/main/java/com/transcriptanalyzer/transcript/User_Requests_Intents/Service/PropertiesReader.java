@@ -1,4 +1,4 @@
-package com.transcriptanalyzer.transcript.Service;
+package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
