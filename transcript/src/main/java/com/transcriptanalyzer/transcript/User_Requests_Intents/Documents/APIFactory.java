@@ -1,5 +1,6 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Documents;
 
-public class APIFactory {
+public interface APIFactory {
+    API create(String apiKey, String apiVersion);
 
 }
