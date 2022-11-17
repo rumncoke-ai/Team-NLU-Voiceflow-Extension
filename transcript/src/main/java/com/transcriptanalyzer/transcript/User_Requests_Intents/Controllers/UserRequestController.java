@@ -2,8 +2,11 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.TranscriptService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,9 @@ public interface UserRequestController {
 //    void storeAPIVersion(String apiVersion);
 
     ArrayList<ArrayList<ArrayList<String>>> getCleanedTranscript() throws Exception;
+
+    ArrayList<String>  getThreeIntents() throws IOException;
+//    }
 
 
 

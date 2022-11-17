@@ -23,13 +23,36 @@ public class UserRequestControllerImp implements UserRequestController {
     @Override
     @PostMapping("/storeAPI")
     public void storeAPIInfo(@RequestBody UserAPI api) {
-        transcriptService.storeAPIInfo(api);
+        //transcriptService.storeAPIInfo(api);
+        transcriptService.storeAPIInfoProperties(api);
     }
 
     @Override
     @GetMapping("/cleanTranscript") // this will return a list
     public ArrayList<ArrayList<ArrayList<String>>>  getCleanedTranscript() throws IOException {
         return TranscriptService.getJSONContent();
+    }
+
+    @GetMapping("/cleanTranscript/level/1") // this will return a list
+    public ArrayList<String> getCleanedTranscriptLevelDown_1() throws IOException {
+        //Intent 1
+        //return (TranscriptService.getJSONContent()).get(0).get(1);
+
+        //Intent 2
+        return (TranscriptService.getJSONContent()).get(0).get(3);
+
+    }
+
+    @GetMapping("/cleanTranscript/level/2") // this will return a list
+    public ArrayList<String> getCleanedTranscriptLevelDown_2() throws IOException {
+        //Intent 3
+        return (TranscriptService.getJSONContent()).get(2).get(1);
+    }
+
+    @Override
+    @GetMapping("/threeIntents") // this will return a list
+    public ArrayList<String>  getThreeIntents() throws IOException {
+        return TranscriptService.getIntents();
     }
 }
 

@@ -1,6 +1,8 @@
 package com.transcriptanalyzer.transcript;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.TranscriptRepository;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.PropertiesReader;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.PropertiesWriter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

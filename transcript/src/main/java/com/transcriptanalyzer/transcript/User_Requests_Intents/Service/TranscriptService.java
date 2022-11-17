@@ -24,20 +24,29 @@ public class TranscriptService {
 
     private ApiRepository apiRepository;
 
-//    //Stores the APIKey in the apiAccess.properties files
-//    //Switched to static
-//    public static void storeAPIKey(String apiKey) {
-//    }
-//
-//
-//    //Stores the APIVersion in the apiAccess.properties files
-//    //Switched to static
-//    public static void storeAPIVersion(String apiVersion) {
-//
-//    }
+    public static ArrayList<String> getIntents() throws IOException {
+        ArrayList<String> list = new ArrayList<>();
+    //Intent 1
+        String intent_1 = getJSONContent().get(0).get(1).get(0).replaceAll("[:{\"}]","");
+        intent_1 = intent_1.substring(11);
+        String intent_2 = getJSONContent().get(0).get(3).get(0).replaceAll("[:{\"}]","");
+        intent_2 = intent_2.substring(11);
+        String intent_3 = getJSONContent().get(2).get(1).get(0).replaceAll("[:{\"}]","");
+        intent_3 = intent_3.substring(11);
+
+
+        list.add(intent_1);
+        list.add(intent_2);
+        list.add(intent_3);
+        return list;
+    }
 
     public void storeAPIInfo(UserAPI api) {
         apiRepository.insert(api);
+    }
+    public void storeAPIInfoProperties(UserAPI api) {
+        PropertiesWriter.setProperty("api-key", api.getApiKey());
+        PropertiesWriter.setProperty("api-version", api.getApiVersion());
     }
 
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
@@ -132,6 +141,18 @@ public class TranscriptService {
 //        System.out.println(turnsByKey);
     }
 
+
+//Stores the APIKey in the apiAccess.properties files
+//    //Switched to static
+//    public static void storeAPIKey(String apiKey) {
+//    }
+//
+//
+//    //Stores the APIVersion in the apiAccess.properties files
+//    //Switched to static
+//    public static void storeAPIVersion(String apiVersion) {
+//
+//    }
 //    public static ArrayList<String> getJSONContent() throws Exception {
 //        // A method which returns the content of each turn of the given transcript. The transcript is based on the API
 //        // key which is stored in an external file.
@@ -352,7 +373,9 @@ public class TranscriptService {
 //    }
 
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(getJSONContent());
-    }
+//    public static void main(String[] args) throws Exception {
+//        System.out.println(getJSONContent());
+//    }
+
+
 }
