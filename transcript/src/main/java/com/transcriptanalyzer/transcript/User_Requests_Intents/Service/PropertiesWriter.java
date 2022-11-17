@@ -14,8 +14,11 @@ public final class PropertiesWriter {
     private static FileReader reader = null;
     private static FileWriter writer = null;
 
-    private static final File file = new File("/Users/rumaisachowdhury/IdeaProjects/" +
-            "Team-NLU-Voiceflow-Extension-controller-fix/transcript/src/main/resources/apiAccess.properties");
+
+    // make sure this user.dir call is clean and works on any machine. there's a good chance
+    // its a bad idea. -martin, thurs nov 17, 3:50am
+    private static final File file = new File(System.getProperty("user.dir") +
+            "/src/main/resources/apiAccess.properties");
 
     private static final Properties PROPERTIES;
 
@@ -30,20 +33,28 @@ public final class PropertiesWriter {
         //create a new Properties object and sets it to properties
         PROPERTIES = new Properties();
 
-        try {
-            reader = new FileReader(file);
-            writer = new FileWriter(file);
-            PROPERTIES.load(reader);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            reader = new FileReader(file);
+//            writer = new FileWriter(file);
+//            PROPERTIES.load(reader);
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
     }
 
     public static void setProperty(final String key, final String value) {
         PROPERTIES.setProperty(key, value);
+
+        try {
+            writer = new FileWriter(file);
+            PROPERTIES.store(writer, "Properties Stored.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
-
 //public final class PropertiesWriter {
 //
 //    //Creates an instance of the logger

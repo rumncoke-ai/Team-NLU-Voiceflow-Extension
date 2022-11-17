@@ -38,6 +38,9 @@ public class TranscriptService {
         list.add(intent_1);
         list.add(intent_2);
         list.add(intent_3);
+
+//      System.out.println(list);
+
         return list;
     }
 
