@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Team-NLU-Voiceflow-Extension.iml" filepath="$PROJECT_DIR$/.idea/Team-NLU-Voiceflow-Extension.iml" />
       <module fileurl="file://$PROJECT_DIR$/transcript/transcript.iml" filepath="$PROJECT_DIR$/transcript/transcript.iml" />
     </modules>
   </component>
