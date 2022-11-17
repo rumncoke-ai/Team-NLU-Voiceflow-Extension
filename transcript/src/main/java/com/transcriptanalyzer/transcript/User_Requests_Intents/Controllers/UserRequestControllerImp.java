@@ -2,6 +2,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 //import the Transcript Service class as something else to implement clean architecture (NOT POSSIBLE IN JAVA)
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.TranscriptService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class UserRequestControllerImp implements UserRequestController {
 
     @Override
     @PostMapping("/storeAPI")
-    public void storeAPIInfo(@RequestBody API api) {
+    public void storeAPIInfo(@RequestBody UserAPI api) {
         transcriptService.storeAPIInfo(api);
     }
 

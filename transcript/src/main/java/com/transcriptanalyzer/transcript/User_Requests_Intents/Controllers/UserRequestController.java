@@ -1,6 +1,7 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public interface UserRequestController {
      * implementation file, should we have mappings on out controller file
      */
 
-    void storeAPIInfo(API api);
+    void storeAPIInfo(UserAPI api);
 
 //    void storeAPIKey(String apiKey);
 //
