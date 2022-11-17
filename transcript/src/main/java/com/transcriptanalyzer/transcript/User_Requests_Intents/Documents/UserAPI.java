@@ -1,5 +1,6 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Documents;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -13,7 +14,7 @@ public class UserAPI implements API {
 
     //There should be a database linked to every new apiKey
 
-    UserAPI(String apiKey, String apiVersion) {
+    public UserAPI(String apiKey, String apiVersion) {
         this.apiKey = apiKey;
         this.apiVersion = apiVersion;
     }

@@ -1,11 +1,7 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents;
 
-import com.transcriptanalyzer.transcript.UserAPIRequestModel;
-import com.transcriptanalyzer.transcript.UserTreeMap;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.APIFactory;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.TranscriptFactory;
-
-import java.time.LocalDateTime;
 
 public class UserRequestInteractor implements UserApiInputBoundary{
     //This is where the main logic occurs
@@ -29,9 +25,9 @@ public class UserRequestInteractor implements UserApiInputBoundary{
         this.transcriptFactory = transcriptFactory;
     }
 
-    @Override
-    public UserTreeMap create(UserAPIRequestModel requestModel){
-
-    }
+//    @Override
+//    public UserTreeMap create(UserAPIRequestModel requestModel){
+//
+//    }
 
 }

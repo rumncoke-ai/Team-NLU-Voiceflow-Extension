@@ -1,11 +1,14 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 //import the Transcript Service class as something else to implement clean architecture (NOT POSSIBLE IN JAVA)
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.TranscriptService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -18,28 +21,36 @@ public class UserRequestControllerImp implements UserRequestController {
     private final TranscriptService transcriptService;
 
     @Override
-    @PostMapping("/storeAPI/Key")
-    public void storeAPIKey(@RequestBody String apiKey) {
-       transcriptService.storeAPIKey(apiKey);
+    @PostMapping("/storeAPI")
+    public void storeAPIInfo(@RequestBody UserAPI api) {
+        transcriptService.storeAPIInfo(api);
     }
 
     @Override
-    @PostMapping("/storeAPI/Version")
-    public void storeAPIVersion(@RequestBody String apiVersion) {
-        transcriptService.storeAPIVersion(apiVersion);
+    @GetMapping("/cleanTranscript") // this will return a list
+    public ArrayList<ArrayList<ArrayList<String>>>  getCleanedTranscript() throws IOException {
+        return TranscriptService.getJSONContent();
     }
+}
+
+
+
+//    @Override
+//    @PostMapping("/storeAPI/Key")
+//    public void storeAPIKey(@RequestBody String apiKey) {
+//       transcriptService.storeAPIKey(apiKey);
+//    }
+//
+//    @Override
+//    @PostMapping("/storeAPI/Version")
+//    public void storeAPIVersion(@RequestBody String apiVersion) {
+//        transcriptService.storeAPIVersion(apiVersion);
+//    }
 
 //    @GetMapping("/getBestIntents") // this will return a list
 //    public List<String> getBestIntent() {
 //        return transcriptService.getBestIntent();
 //    }
-
-    @Override
-    @GetMapping("/cleanTranscript") // this will return a list
-    public List<String> getCleanedTranscript() throws Exception {
-        return transcriptService.getJSONContent();
-    }
-}
 
 //    @PostMapping("/storeData")
 //    public void storeTranscriptData() throws Exception {
