@@ -21,7 +21,7 @@ jobs:
       - name: Upload JAR
         uses: actions/upload-artifact@v2
         with:
-          name: artifact
+          name: transcript
           path: transcript/target/-0.0.1-SNAPSHOT.jar   
   deploy:
     needs: build
