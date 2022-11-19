@@ -18,6 +18,11 @@ import java.util.*;
 public class UserRequestControllerImp implements UserRequestController {
     @Autowired
     private final TranscriptService transcriptService;
+    
+    @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
+    public ResponseEntity getServiceName() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @Override
     @PostMapping("/storeAPI")
