@@ -25,6 +25,11 @@ public class UserRequestControllerImp implements UserRequestController {
     public ResponseEntity getServiceName() {
         return new ResponseEntity(HttpStatus.OK);
     }
+    
+    @GetMapping("/getAll")
+    public String fetchAllTranscripts() {
+       return "Hello World!";
+    }
 
     @Override
     @PostMapping("/storeAPI")
