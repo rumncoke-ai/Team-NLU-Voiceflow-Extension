@@ -102,14 +102,16 @@ public class TranscriptService {
 //            System.out.println(turnContent);
 
             if (turnContent.keySet().contains("query") || turnContent.keySet().contains("intent")) {
-                String intent = turnContent.get("intent").toString();
-                contains.add("intent: " + intent);
+                JsonObject intentContainer = turnContent.get("intent").getAsJsonObject();
+                String intent = intentContainer.get("name").toString();
+                contains.add(intent);
             }
 
             if (turnContent.keySet().contains("message")){
                 String message = turnContent.get("message").toString();
-                contains.add("message: " + message);
+                contains.add(message);
             }
+
 
             overallParse.add(contains);
         }
