@@ -1,5 +1,7 @@
 package com.transcriptanalyzer.transcript;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,10 @@ public class Tree {
             // at the end of each transcript bring treeNode back to top
             this.treeRootNode = start;
         }
+    }
+
+    public static void main(String[] args) {
+
     }
 
     // class for each individual intent
@@ -142,10 +148,7 @@ public class Tree {
     }
 
     // get a list of the three nodes with the greatest occurrences sorted in decreasing order
-    public List<String> getTopThree(){
-        // TODO: get the top 3 intents for sets: one set is the 3 most common for the whole tree (higher level),
-        //  one is 3 most common for leafs,
-
+    public List<String> getBestTreeIntents(){
         // compares each value and get the top 3, return key list attributed to these top 3
         return this.counts.entrySet().stream().sorted(
                 Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).map(
@@ -161,6 +164,14 @@ public class Tree {
 
         // return a list containing the keys of that hash map; the best intents themselves
         return new ArrayList<>(bestLeafData.keySet());
+    }
+
+    public ArrayList<List<String>> getBestIntents(){
+        ArrayList<List<String>> options = new ArrayList<List<String>>(2);
+        options.add(this.getBestTreeIntents());
+        options.add(this.getBestLeafIntents());
+
+        return options;
     }
 
     public int add (int numberA, int numberB){
