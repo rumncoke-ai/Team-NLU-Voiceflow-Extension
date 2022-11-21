@@ -2,12 +2,25 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Documents;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
+public class API {
 
-public interface API {
-    String getApiKey();
+    private final String apiKey;
 
-    String getApiVersion();
+    private final String apiVersion;
 
-    //Is there ar way to check if the apiKey or apiVersion is valid
+    public API(String apiKey, String apiVersion) {
+        this.apiKey = apiKey;
+        this.apiVersion = apiVersion;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
 
 }

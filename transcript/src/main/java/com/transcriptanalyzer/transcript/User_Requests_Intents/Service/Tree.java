@@ -1,4 +1,4 @@
-package com.transcriptanalyzer.transcript;
+package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
