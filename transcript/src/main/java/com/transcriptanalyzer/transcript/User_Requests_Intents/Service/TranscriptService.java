@@ -173,7 +173,7 @@ public class TranscriptService {
 
 //              Isolate messages of end turns of successful transcripts
                 if (!String.valueOf(currIntent).equals("Null")) {
-                turnToMerge.add(String.valueOf(currIntent));
+                    turnToMerge.add(String.valueOf(currIntent));
                 }
 
                 mergedResult.add(turnToMerge);
