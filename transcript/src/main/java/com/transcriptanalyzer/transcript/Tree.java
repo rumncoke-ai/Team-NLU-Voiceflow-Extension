@@ -38,10 +38,6 @@ public class Tree {
         }
     }
 
-    public static void main(String[] args) {
-
-    }
-
     // class for each individual intent
     public class Node {
         private String intent;
@@ -138,13 +134,9 @@ public class Tree {
                     // are unique; they were created by merging entries.
                     bestLeafData.put(key, value);
                 }
-
             }
-
-
             return bestLeafData;
         }
-
     }
 
     // get a list of the three nodes with the greatest occurrences sorted in decreasing order
@@ -166,6 +158,7 @@ public class Tree {
         return new ArrayList<>(bestLeafData.keySet());
     }
 
+    // get both sets of the top 3 intents
     public ArrayList<List<String>> getBestIntents(){
         ArrayList<List<String>> options = new ArrayList<List<String>>(2);
         options.add(this.getBestTreeIntents());
@@ -173,19 +166,4 @@ public class Tree {
 
         return options;
     }
-
-    public int add (int numberA, int numberB){
-        return numberA + numberB;
-    }
 }
-
-
-/*
-ArrayList<ArrayList<ArrayList<String>>>
-such that:
-Outermost layer: Stores overall result for all transcripts.
-Middle Layer: each element is a full transcript.
-Inner layer: each element is a turn.
-String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
-*/
-
