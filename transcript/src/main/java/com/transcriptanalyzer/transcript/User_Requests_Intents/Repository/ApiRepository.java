@@ -6,13 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
+// Extends the MongoRepository to utilize the database functions for API objects
 public interface ApiRepository extends MongoRepository<API, String> {
 
-//    List<Transcript> findTranscriptsByIntent(String intent);
-//
-//    void deleteByIntent(String intent);
-//
-//
-//    //@Query("")
-//    //void test();
 }
