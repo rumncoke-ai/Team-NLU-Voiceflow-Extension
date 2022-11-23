@@ -18,6 +18,7 @@ public final class PropertiesReader {
 
     //Intializes a properties variable
     private static final Properties PROPERTIES;
+
     //Name of file that we wish to access
     private static final String PROP_FILE = "apiAccess.properties";
 
@@ -50,6 +51,7 @@ public final class PropertiesReader {
             }
         }
     }
+
 
     /**
      * Method getProperty.

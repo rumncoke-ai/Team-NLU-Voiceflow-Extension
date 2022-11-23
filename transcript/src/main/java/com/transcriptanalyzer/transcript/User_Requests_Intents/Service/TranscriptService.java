@@ -52,6 +52,17 @@ public class TranscriptService {
         PropertiesWriter.setProperty("api-version", api.getApiVersion());
     }
 
+    /**
+     * Method getJSONContent.
+     *
+     * @return Return all transcript data from attached to the chatbot from the set apiKey and Version ID
+     *
+     * Data is cleaned and exibits both messages and intents specific format includes:
+     *     Outermost layer: Stores overall result for all transcripts.
+     *     Middle Layer: Each element is a full transcript.
+     *     Inner layer: Each element is a turn.
+     *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
+     */
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
         String apiKey = PropertiesReader.getProperty("api-key");
         String version = PropertiesReader.getProperty("api-version");
@@ -72,10 +83,9 @@ public class TranscriptService {
 
 
 
-
-
         return finalParseResults;
     }
+
 
     // Helper functions to getJSONContent
 

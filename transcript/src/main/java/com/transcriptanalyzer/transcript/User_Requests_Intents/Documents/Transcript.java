@@ -5,11 +5,33 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Data
+@Document
 
-public interface Transcript {
-    String getId();
-    String getIntent();
-    String getContent();
+//@CompoundIndex(def = "{'intent': 1, 'content': 1}", unique = true)
+public class Transcript{
+    @Id
+    private String id;
+
+    private String intent;
+    private String content;
+
+    public Transcript(String intent, String content) {
+        this.intent = intent;
+        this.content = content;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getIntent() {
+        return intent;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+
 }
-
-
