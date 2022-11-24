@@ -39,8 +39,8 @@ public class Tree {
     }
 
     // class for each individual intent
-    public class Node {
-        private String intent;
+    public static class Node {
+        private final String intent;
         // # of number it has appeared in its respective turn
         private int occurrences;
         private Node parent;
@@ -160,7 +160,7 @@ public class Tree {
 
     // get both sets of the top 3 intents
     public ArrayList<List<String>> getBestIntents(){
-        ArrayList<List<String>> options = new ArrayList<List<String>>(2);
+        ArrayList<List<String>> options = new ArrayList<>(2);
         options.add(this.getBestTreeIntents());
         options.add(this.getBestLeafIntents());
 

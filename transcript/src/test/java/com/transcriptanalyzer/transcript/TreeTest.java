@@ -1,6 +1,6 @@
 package com.transcriptanalyzer.transcript;
 
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.Tree;
+import com.transcriptanalyzer.transcript.Tree;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -80,6 +80,7 @@ class TreeTest {
     void testPizzaTree(){
         ArrayList<ArrayList<ArrayList<String>>> testData = getTestPizzaData();
         var IntentTree = new Tree(testData);
-        assertEquals("[[Order pizza, Order, Remake], [Veggie, Pepperoni, Order pizza]]", IntentTree.getBestIntents().toString());
+        assertEquals("[[Order pizza, Order, Remake], [Veggie, Pepperoni, Order pizza]]",
+                IntentTree.getBestIntents().toString());
     }
 }
