@@ -2,6 +2,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.google.gson.*;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,22 +25,45 @@ public class TranscriptService {
 
     private ApiRepository apiRepository;
 
-//    //Stores the APIKey in the apiAccess.properties files
-//    //Switched to static
-//    public static void storeAPIKey(String apiKey) {
-//    }
-//
-//
-//    //Stores the APIVersion in the apiAccess.properties files
-//    //Switched to static
-//    public static void storeAPIVersion(String apiVersion) {
-//
-//    }
+    public static ArrayList<String> getIntents() throws IOException {
+        ArrayList<String> list = new ArrayList<>();
+    //Intent 1
+        String intent_1 = getJSONContent().get(0).get(1).get(0).replaceAll("[:{\"}]","");
+        intent_1 = intent_1.substring(11);
+        String intent_2 = getJSONContent().get(0).get(3).get(0).replaceAll("[:{\"}]","");
+        intent_2 = intent_2.substring(11);
+        String intent_3 = getJSONContent().get(2).get(1).get(0).replaceAll("[:{\"}]","");
+        intent_3 = intent_3.substring(11);
 
-    public void storeAPIInfo(API api) {
-        apiRepository.insert(api);
+
+        list.add(intent_1);
+        list.add(intent_2);
+        list.add(intent_3);
+
+//      System.out.println(list);
+
+        return list;
     }
 
+    public void storeAPIInfo(UserAPI api) {
+        apiRepository.insert(api);
+    }
+    public void storeAPIInfoProperties(UserAPI api) {
+        PropertiesWriter.setProperty("api-key", api.getApiKey());
+        PropertiesWriter.setProperty("api-version", api.getApiVersion());
+    }
+
+    /**
+     * Method getJSONContent.
+     *
+     * @return Return all transcript data from attached to the chatbot from the set apiKey and Version ID
+     *
+     * Data is cleaned and exibits both messages and intents specific format includes:
+     *     Outermost layer: Stores overall result for all transcripts.
+     *     Middle Layer: Each element is a full transcript.
+     *     Inner layer: Each element is a turn.
+     *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
+     */
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
 // Return the parsed results of the given chatbot's transcripts.
 
@@ -75,9 +99,11 @@ public class TranscriptService {
 //  response. Note that if there is only one string, it is a termination message when the chatbot ends.
 
         return finalMerge(finalParseResults);
+        //return finalParseResults;
     }
 
-    // Below are helper functions to getJSONContent
+
+    // Helper functions to getJSONContent
 
     private static String retrieveJsonString(URL url) throws IOException {
 
@@ -199,6 +225,111 @@ public class TranscriptService {
     }
 
 // End of helper functions to getJsonContent()
+
+//Stores the APIKey in the apiAccess.properties files
+//    //Switched to static
+//    public static void storeAPIKey(String apiKey) {
+//    }
+//
+//
+//    //Stores the APIVersion in the apiAccess.properties files
+//    //Switched to static
+//    public static void storeAPIVersion(String apiVersion) {
+//
+//    }
+//    public static ArrayList<String> getJSONContent() throws Exception {
+//        // A method which returns the content of each turn of the given transcript. The transcript is based on the API
+//        // key which is stored in an external file.
+//
+//        // Create an object within which you can store JSON string information taken from the Voiceflow API.
+//        StringBuilder jsonString = new StringBuilder();
+//
+//        // ArrayList object which will store result of transcript parsing and be returned by method.
+//        ArrayList<String> finalParseResults = new ArrayList<>();
+//
+//        // Define the url to download the transcript from, based on the API key and version number.
+//        String apiKey = PropertiesReader.getProperty("api-key");
+//        String version = PropertiesReader.getProperty("api-version");
+//        String urlToRead = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
+//
+//        // Create a URL object to use for connecting to the Voiceflow API.
+//        URL url = new URL(urlToRead);
+//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//
+//        // Set the connection to the appropriate method.
+//        conn.setRequestMethod("GET");
+//
+//        // Read the information from the Voiceflow API into a string.
+//        jsonGetter(jsonString, conn);
+//
+//        // Transform the JSON string into a JSONArray object for parsing and manipulation.
+//        JSONParser parse = new JSONParser(jsonString.toString());
+//
+//        //Expected 0 arguments but found 1, for parse(jsonString.toString()), rearranged
+//        // so JSONParser(jsonString.toString())
+//        //JSONArray dataArr = (JSONArray) parse.parse(jsonString.toString());
+//        JSONArray dataArr = (JSONArray) parse.parse();
+//
+//
+//        flowIterator(finalParseResults, dataArr);
+//        // Return the resulting information.
+//        return finalParseResults;
+//    }
+//
+//    // Helper functions to getJSONContent
+//
+//    private static void jsonGetter(StringBuilder jsonString, HttpURLConnection conn) throws IOException {
+//        try (BufferedReader reader = new BufferedReader(
+//                new InputStreamReader(conn.getInputStream()))) {
+//            for (String line; (line = reader.readLine()) != null; ) {
+//                jsonString.append(line);
+//            }
+//        }
+//    }
+//
+//    private static void flowIterator(ArrayList<String> finalParseResults, JSONArray dataArr) {
+//        // Iterate through each flow contained within the transcript array.
+//        for (Object value : dataArr) {
+//            JSONArray transcriptTop = (JSONArray) value;
+//
+//            // Store turns which have been found to be meaningful actions or responses
+//            ArrayList<JSONObject> turnsByKey = new ArrayList<>();
+//
+//            turnReader(transcriptTop, turnsByKey);
+//            accessTurnData(finalParseResults, turnsByKey);
+//        }
+//    }
+
+//    private static void accessTurnData(ArrayList<String> finalParseResults, ArrayList<JSONObject> turnsByKey) {
+//        for (JSONObject item : turnsByKey) {
+//            ArrayList<String> contains = new ArrayList<>();
+//
+//            if (item.containsKey("message")) {
+//                String message = item.get("message").toString();
+//                contains.add("message: " + message);
+//            }
+//
+//            if (item.containsKey("intent")) {
+//                String intent = item.get("intent").toString();
+//                contains.add("intent: " + intent);
+//            }
+//
+//            finalParseResults.add(contains.toString());
+//        }
+//    }
+//
+//    private static void turnReader(JSONArray transcriptTop, ArrayList<JSONObject> turnsByKey) {
+//        // Find the turns within the flow which contain meaningful actions (i.e., not set-up or termination)
+//        for (Object o : transcriptTop) {
+//            JSONObject turn = (JSONObject) o;
+//            if (turn.containsKey("type") && turn.get("type").equals("request")) {
+//                turnsByKey.add(turn);
+//            } else if (turn.containsKey("type") && turn.get("type").equals("text")) {
+//                turnsByKey.add(turn);
+//            }
+//        }
+
+
 
 //    public static void countIntents(){
 //        //Changes the intentTreeMap with the intents as keys
@@ -326,7 +457,9 @@ public class TranscriptService {
 //    }
 
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(getJSONContent());
-    }
+//    public static void main(String[] args) throws Exception {
+//        System.out.println(getJSONContent());
+//    }
+
+
 }

@@ -60,7 +60,7 @@ public class Tree {
                 // increment occurrences of this node
                 node.occurrences += 1;
                 return node;
-                // if the intent is not a child of the node
+            // if the intent is not a child of the node
             } else {
                 // create the new node and add it as a child of the parent node
                 Node newChildNode = new Node(intent, this);
@@ -144,7 +144,7 @@ public class Tree {
         // compares each value and get the top 3, return key list attributed to these top 3
         return this.counts.entrySet().stream().sorted(
                 Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).map(
-                Map.Entry::getKey).collect(Collectors.toList());
+                        Map.Entry::getKey).collect(Collectors.toList());
     }
 
     //martin: create top 3 for leaves
@@ -167,3 +167,12 @@ public class Tree {
         return options;
     }
 }
+
+/*
+ArrayList<ArrayList<ArrayList<String>>>
+such that:
+Outermost layer: Stores overall result for all transcripts.
+Middle Layer: each element is a full transcript.
+Inner layer: each element is a turn.
+String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
+*/

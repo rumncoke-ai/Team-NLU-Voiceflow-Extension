@@ -2,11 +2,10 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 //import the Transcript Service class as something else to implement clean architecture (NOT POSSIBLE IN JAVA)
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.TranscriptService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -20,27 +19,40 @@ import java.util.*;
 public class UserRequestControllerImp implements UserRequestController {
     @Autowired
     private final TranscriptService transcriptService;
-    
-    @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
-    public ResponseEntity getServiceName() {
-        return new ResponseEntity(HttpStatus.OK);
-    }
-    
-    @GetMapping("/getAll")
-    public String fetchAllTranscripts() {
-       return "Hello World!";
-    }
 
     @Override
     @PostMapping("/storeAPI")
-    public void storeAPIInfo(@RequestBody API api) {
-        transcriptService.storeAPIInfo(api);
+    public void storeAPIInfo(@RequestBody UserAPI api) {
+        //transcriptService.storeAPIInfo(api);
+        transcriptService.storeAPIInfoProperties(api);
     }
 
     @Override
     @GetMapping("/cleanTranscript") // this will return a list
     public ArrayList<ArrayList<ArrayList<String>>>  getCleanedTranscript() throws IOException {
         return TranscriptService.getJSONContent();
+    }
+
+    @GetMapping("/cleanTranscript/level/1") // this will return a list
+    public ArrayList<String> getCleanedTranscriptLevelDown_1() throws IOException {
+        //Intent 1
+        //return (TranscriptService.getJSONContent()).get(0).get(1);
+
+        //Intent 2
+        return (TranscriptService.getJSONContent()).get(0).get(3);
+
+    }
+
+    @GetMapping("/cleanTranscript/level/2") // this will return a list
+    public ArrayList<String> getCleanedTranscriptLevelDown_2() throws IOException {
+        //Intent 3
+        return (TranscriptService.getJSONContent()).get(2).get(1);
+    }
+
+    @Override
+    @GetMapping("/threeIntents") // this will return a list
+    public ArrayList<String>  getThreeIntents() throws IOException {
+        return TranscriptService.getIntents();
     }
 }
 

@@ -5,13 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
+
+// Extends the MongoRepository to utilize the database functions for Transcript objects
 public interface TranscriptRepository extends MongoRepository<Transcript, String> {
-
-    List<Transcript> findTranscriptsByIntent(String intent);
-
-    void deleteByIntent(String intent);
-
-
-    //@Query("")
-    //void test();
 }
