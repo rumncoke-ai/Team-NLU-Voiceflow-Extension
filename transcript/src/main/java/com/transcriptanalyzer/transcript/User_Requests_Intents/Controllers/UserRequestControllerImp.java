@@ -7,6 +7,8 @@ import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.Transcrip
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,6 +21,11 @@ import java.util.*;
 public class UserRequestControllerImp implements UserRequestController {
     @Autowired
     private final TranscriptService transcriptService;
+    
+    @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
+    public ResponseEntity getServiceName() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @Override
     @PostMapping("/storeAPI")
