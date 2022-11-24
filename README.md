@@ -19,7 +19,7 @@
 <h4 align="center">By Team N.L.U. - <b>N</b>atural <b>L</b>eaders <b>U</b>nited</h4>
 
   <p align="center">
-    The aim of our project is to access the transcript data of pre-existing chatbots from within Voiceflow using the API, and to parse and analyze this data to return suggestions for strong starting suggestions for customer chatbots!
+    The aim of our project is to access the transcript data of pre-existing chatbots from within Voiceflow using the API, and to parse and analyze this data to return strong starter-node suggestions for customer chatbots!
     <br />
     <a href="https://github.com/rumncoke-ai/Team-NLU-Voiceflow-Extension"><strong>Explore the docs »</strong></a>
     <br />
