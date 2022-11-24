@@ -37,8 +37,8 @@ public class UserRequestInteractor {
     }
 
 
-    public List<String> getIntents() {
-        return tree.getTopThree();
+    public ArrayList<List<String>> getBestIntents() {
+        return tree.getBestIntents();
     }
 
     public void deleteAll() {

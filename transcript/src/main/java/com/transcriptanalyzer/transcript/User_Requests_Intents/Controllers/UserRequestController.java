@@ -46,12 +46,14 @@ public class UserRequestController{
 
     //EDIT THE FOLLOWING CODE TO MATCH THE UPDATED TREE CODE
     @GetMapping("/threeIntents") // Returns the top three intents to be added to the front end
-    public List<String> getThreeIntents() throws IOException {
-        List<String> returnValue;
-        returnValue = interactor.getIntents();
-        interactor.deleteAll();
-        return returnValue;
+    public ArrayList<List<String>> getTreeThreeIntents() throws IOException {
+        //List<String> returnValue;
+        //returnValue = interactor.getTreeIntents();
+        //interactor.deleteAll();
+        //return returnValue;
+        return interactor.getBestIntents();
     }
+
 }
 
 

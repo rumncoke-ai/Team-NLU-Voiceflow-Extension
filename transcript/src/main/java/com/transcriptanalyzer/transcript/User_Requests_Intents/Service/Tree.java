@@ -1,5 +1,6 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -8,9 +9,6 @@ import java.util.stream.Collectors;
 // Assume we are producing one tree for a certain transcript in the ArrayList of transcripts
 @Service
 public class Tree {
-    /**
-     * This Class holds all code that creates a tree from Transcript data pulled from the voiceflow API
-     * */
     private Node treeRootNode;
     private HashMap<String, Integer> counts;
 
@@ -43,8 +41,8 @@ public class Tree {
     }
 
     // class for each individual intent
-    public class Node {
-        private String intent;
+    public static class Node {
+        private final String intent;
         // # of number it has appeared in its respective turn
         private int occurrences;
         private Node parent;
@@ -82,13 +80,69 @@ public class Tree {
             }
             return null;
         }
+
+        // return a hashmap mapping the 3 leaf intents with most occurrences to their occurrences in descending order
+        public LinkedHashMap<String, Integer> getBestLeafData() {
+            // create a list for the best leaf data of all children
+            LinkedHashMap<String, Integer> leafData = new LinkedHashMap<>();
+            // create a placeholder list for the top three leaf intents
+            LinkedHashMap<String, Integer> bestLeafData = new LinkedHashMap<>();
+
+            // if this is a leaf node (has no children), set the best leaf data to its own intent and occurrences
+            // so that it may be returned
+            if (this.children.isEmpty()) {
+                bestLeafData.put(this.intent, this.occurrences);
+            }
+            // otherwise, get the best 3 intents and their occurrences from this node's children
+            else {
+                // for each child, get its best leaf data and merge it all into leafData
+                for (Node child: this.children) {
+                    // take the best leaf data of the current child
+                    LinkedHashMap<String, Integer> childBestLeaves = child.getBestLeafData();
+
+                    // for each entry of this child's best leaf data, merge the entry into leafData
+                    for (Map.Entry<String, Integer> leaf: childBestLeaves.entrySet()) {
+                        // get the intent and occurrence of the current entry
+                        String intent = leaf.getKey();
+                        Integer occurrences = leaf.getValue();
+
+                        // merge it into leaf data. If an occurrence is new, it is added to the LinkedHashMap.
+                        // If it already exists, their values are summed using Integer::sum
+                        leafData.merge(intent, occurrences, Integer::sum);
+                    }
+                }
+
+                // move the leaves into a list
+                List<Map.Entry<String, Integer>> leafDataEntries = new ArrayList<>(leafData.entrySet());
+
+                // sort the list using the Map.Entry comparing by value comparator in reverse order
+                // this sorts each hash map entry, which is stored in a list, in descending order
+                leafDataEntries.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
+
+                // determine how many entries to take from the list
+                // take the last index of the entries we will take. no more than 3,
+                // and no more than the number of elements in the list
+                int last_index = java.lang.Math.min(2, leafDataEntries.size() - 1);
+
+                // for each index of the entries we want
+                for (int i = 0; i <= last_index; i++) {
+                    // directly extract the key and value at that index
+                    String key = leafDataEntries.get(i).getKey();
+                    Integer value = leafDataEntries.get(i).getValue();
+
+                    // put them into the new sorted map. Has 0 to 3 values in it. In the context of our problem,
+                    // should have 1 to 3.
+                    // we can put instead of merging without overwriting because we know the entries in leafDataEntries
+                    // are unique; they were created by merging entries.
+                    bestLeafData.put(key, value);
+                }
+            }
+            return bestLeafData;
+        }
     }
 
     // get a list of the three nodes with the greatest occurrences sorted in decreasing order
-    public List<String> getTopThree(){
-        // TODO: get the top 3 intents for sets: one set is the 3 most common for the whole tree (higher level),
-        //  one is 3 most common for leafs,
-
+    public List<String> getBestTreeIntents(){
         // compares each value and get the top 3, return key list attributed to these top 3
         return this.counts.entrySet().stream().sorted(
                 Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).map(
@@ -96,12 +150,25 @@ public class Tree {
     }
 
     //martin: create top 3 for leaves
+    public List<String> getBestLeafIntents() {
 
-    public int add (int numberA, int numberB){
-        return numberA + numberB;
+        // get a hash map that is mapping intent to occurrences of the highest occurring intents of all leaves.
+        // in descending order.
+        LinkedHashMap<String, Integer> bestLeafData = this.treeRootNode.getBestLeafData();
+
+        // return a list containing the keys of that hash map; the best intents themselves
+        return new ArrayList<>(bestLeafData.keySet());
+    }
+
+    // get both sets of the top 3 intents
+    public ArrayList<List<String>> getBestIntents(){
+        ArrayList<List<String>> options = new ArrayList<>(2);
+        options.add(this.getBestTreeIntents());
+        options.add(this.getBestLeafIntents());
+
+        return options;
     }
 }
-
 
 /*
 ArrayList<ArrayList<ArrayList<String>>>
@@ -111,4 +178,3 @@ Middle Layer: each element is a full transcript.
 Inner layer: each element is a turn.
 String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
 */
-
