@@ -1,2 +1,2 @@
 server:
-  port: 8080 # change the port spring is hosted on here (we can make it anything we want)
+  port: 5000 # change the port spring is hosted on here (we can make it anything we want)
