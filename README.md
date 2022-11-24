@@ -64,7 +64,7 @@
 <!-- ABOUT THE PROJECT-->
 ## About The Project
 
-The aim of this project is to take users' pre-built chatbots on the Voiceflow platform and to parse and analyze their transcripts in order to offer suggestions for starting nodes (i.e., the initial message). We generate these suggesstion based on a variety of metrics, from the overall frequency of intents to the rate at which they appear at lead nodes (i.e., the end of an interaction). Users will then have to option to sort through these suggestions and, should they resonate with any, choose to have it automatically inserted into their Voiceflow canvas.
+The aim of this project is to take users' pre-built chatbots on the Voiceflow platform and to parse and analyze their transcripts in order to offer suggestions for starting nodes (i.e., the initial message). We generate these suggestions based on a variety of metrics, from the overall frequency of intents to the rate at which they appear at leaf nodes (i.e., the end of an interaction). Users will then have to option to sort through these suggestions and, should they resonate with any, choose to have it automatically inserted into their Voiceflow canvas.
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
