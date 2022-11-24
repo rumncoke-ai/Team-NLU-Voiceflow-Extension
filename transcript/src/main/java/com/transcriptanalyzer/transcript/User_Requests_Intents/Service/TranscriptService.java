@@ -2,7 +2,6 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.google.gson.*;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,10 +43,10 @@ public class TranscriptService {
         return list;
     }
 
-    public void storeAPIInfo(UserAPI api) {
+    public void storeAPIInfo(API api) {
         apiRepository.insert(api);
     }
-    public void storeAPIInfoProperties(UserAPI api) {
+    public void storeAPIInfoProperties(API api) {
         PropertiesWriter.setProperty("api-key", api.getApiKey());
         PropertiesWriter.setProperty("api-version", api.getApiVersion());
     }
