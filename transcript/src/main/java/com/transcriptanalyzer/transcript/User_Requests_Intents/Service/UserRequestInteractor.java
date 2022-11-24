@@ -37,8 +37,9 @@ public class UserRequestInteractor {
     }
 
 
-    public ArrayList<List<String>> getBestIntents() {
-        return tree.getBestIntents();
+    public ArrayList<List<String>> getBestIntents() throws IOException {
+        Tree intentTree = new Tree(TranscriptService.getJSONContent());
+        return intentTree.getBestIntents();
     }
 
     public void deleteAll() {
