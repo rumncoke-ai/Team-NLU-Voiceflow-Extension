@@ -5,11 +5,17 @@ import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.AccountRepository;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
     private ApiRepository apiRepository;
 
     private AccountRepository accountRepository;
+
+//    public API getAPIInfo() {
+//        apiRepository.findAll();
+//    }
 
 
     // Inserts the API information -- both apiKey and apiVersion-- in MongoDB
@@ -39,5 +45,10 @@ public class UserService {
     public void storeUserInfo(UserInfo user) {
         storeAPIInfo(new API(user.getApiKey(), user.getApiVersion()));
         storeAccountInfo(new Account(user.getEmailAddress(), user.getPassword(), user.getDiagramID()));
+    }
+
+    public void deleteALl() {
+        apiRepository.deleteAll();
+        accountRepository.deleteAll();
     }
 }

@@ -3,6 +3,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 import com.google.gson.*;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.TranscriptRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,39 +18,8 @@ import java.io.InputStreamReader;
 @AllArgsConstructor
 @Service
 
-//Switching everything to non-static
+
 public class TranscriptService {
-    private TreeMap<String, Integer> intentTreeMap;
-
-    private ApiRepository apiRepository;
-
-    public static ArrayList<String> getIntents() throws IOException {
-        ArrayList<String> list = new ArrayList<>();
-    //Intent 1
-        String intent_1 = getJSONContent().get(0).get(1).get(0).replaceAll("[:{\"}]","");
-        intent_1 = intent_1.substring(11);
-        String intent_2 = getJSONContent().get(0).get(3).get(0).replaceAll("[:{\"}]","");
-        intent_2 = intent_2.substring(11);
-        String intent_3 = getJSONContent().get(2).get(1).get(0).replaceAll("[:{\"}]","");
-        intent_3 = intent_3.substring(11);
-
-
-        list.add(intent_1);
-        list.add(intent_2);
-        list.add(intent_3);
-
-//      System.out.println(list);
-
-        return list;
-    }
-
-    public void storeAPIInfo(API api) {
-        apiRepository.insert(api);
-    }
-    public void storeAPIInfoProperties(API api) {
-        PropertiesWriter.setProperty("api-key", api.getApiKey());
-        PropertiesWriter.setProperty("api-version", api.getApiVersion());
-    }
 
     /**
      * Method getJSONContent.
@@ -63,6 +33,12 @@ public class TranscriptService {
      *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
      */
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
+        //Make a call to the api repostitory that returns the apiKey and apiVersion object
+//        UserService.getAPIInfo()
+//
+//        String apiKey =
+//        String version =
+
         String apiKey = PropertiesReader.getProperty("api-key");
         String version = PropertiesReader.getProperty("api-version");
         String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
@@ -152,6 +128,32 @@ public class TranscriptService {
         }
 //        System.out.println(turnsByKey);
     }
+
+    public void deleteALl() {
+
+    }
+
+
+//    public static ArrayList<String> getIntents() throws IOException {
+//        ArrayList<String> list = new ArrayList<>();
+//        //Intent 1
+//        String intent_1 = getJSONContent().get(0).get(1).get(0).replaceAll("[:{\"}]","");
+//        intent_1 = intent_1.substring(11);
+//        String intent_2 = getJSONContent().get(0).get(3).get(0).replaceAll("[:{\"}]","");
+//        intent_2 = intent_2.substring(11);
+//        String intent_3 = getJSONContent().get(2).get(1).get(0).replaceAll("[:{\"}]","");
+//        intent_3 = intent_3.substring(11);
+//
+//
+//        list.add(intent_1);
+//        list.add(intent_2);
+//        list.add(intent_3);
+//
+//        return list;
+//    }
+
+
+
 
 
 //Stores the APIKey in the apiAccess.properties files

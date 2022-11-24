@@ -1,10 +1,16 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 // Assume we are producing one tree for a certain transcript in the ArrayList of transcripts
+@Service
 public class Tree {
+    /**
+     * This Class holds all code that creates a tree from Transcript data pulled from the voiceflow API
+     * */
     private Node treeRootNode;
     private HashMap<String, Integer> counts;
 
