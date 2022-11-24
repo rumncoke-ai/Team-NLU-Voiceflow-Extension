@@ -7,6 +7,7 @@ import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRep
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import java.io.IOException;
@@ -64,6 +65,9 @@ public class TranscriptService {
      *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
      */
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
+// Return the parsed results of the given chatbot's transcripts.
+
+//      Define the url to call to access the chatbot API.
         String apiKey = PropertiesReader.getProperty("api-key");
         String version = PropertiesReader.getProperty("api-version");
         String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
@@ -71,25 +75,39 @@ public class TranscriptService {
         URL url = new URL(urlString);
 
 
+//      Return the result of the API call (i.e., all the stored transcripts) as one long string in JSON format.
         String jsonString = retrieveJsonString(url);
 
-//        System.out.println(jsonString);
+//      Parse the API return string to form a JsonArray
         JsonArray dataArr = new Gson().fromJson(jsonString, JsonArray.class);
-//        System.out.println(dataArr);
-//        System.out.println(dataArr.asList());
+
+//      Define the object which will contain all of the seperated turns
         ArrayList<ArrayList<ArrayList<String>>> finalParseResults = new ArrayList<>();
 
         flowIterator2(finalParseResults, dataArr);
 
+//  Return the parsed transcripts in the following format:
+//  ArrayList<ArrayList<ArrayList<String>>>
+//  Where the layers represent:
 
+//  Outermost Layer ArrayList<>: Outer container to store the overall results for each transcript.
 
-        return finalParseResults;
+//  Middle Layer ArrayList<>: Each element represents one full transcript that was parsed.
+
+//  Inner layer ArrayList<>: Each element represents a pair of turns from the given transcript; the first string
+//  represents a message from the chatbot, and the subsequent string represents the intent given by the user in
+//  response. Note that if there is only one string, it is a termination message when the chatbot ends.
+
+        return finalMerge(finalParseResults);
+        //return finalParseResults;
     }
 
 
     // Helper functions to getJSONContent
 
     private static String retrieveJsonString(URL url) throws IOException {
+
+//      Access the Voiceflow API from the given url, read transcript results into one JSON formatted string
 
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("GET");
@@ -112,48 +130,101 @@ public class TranscriptService {
             // Store turns which have been found to be meaningful actions or responses
             ArrayList<JsonObject> turnsByKey = new ArrayList<>();
 
+//          Isolate only turns which contain a user request or chatbot response/message
             turnReader(fullTranscriptAsJsonArray, turnsByKey);
+
+//          Isolate the messages and intents as strings in separate ArrayLists from the pre-parsed turns.
             accessTurnData2(finalParseResults, turnsByKey);
         }
     }
 
     private static void accessTurnData2(ArrayList<ArrayList<ArrayList<String>>> finalParseResults, ArrayList<JsonObject> turnsByKey) {
+
+//        Container for results of each parsed turn
         ArrayList<ArrayList<String>> overallParse = new ArrayList<>();
         for (JsonObject item : turnsByKey) {
             ArrayList<String> contains = new ArrayList<>();
             JsonObject turnContent = item.get("payload").getAsJsonObject().get("payload").getAsJsonObject();
-//            System.out.println(turnContent);
 
+//          If the turn is identified as one with user input ("query"), isolate the actual intent ("name") as a string
+//          and return it contained in an ArrayList.
             if (turnContent.keySet().contains("query") || turnContent.keySet().contains("intent")) {
-                String intent = turnContent.get("intent").toString();
-                contains.add("intent: " + intent);
+                JsonObject intentContainer = turnContent.get("intent").getAsJsonObject();
+                String intent = intentContainer.get("name").toString();
+                contains.add(intent);
             }
 
+//          If the turn is identified to be a chatbot response ("message"), return the message as a string within an
+//          ArrayList.
             if (turnContent.keySet().contains("message")){
                 String message = turnContent.get("message").toString();
-                contains.add("message: " + message);
+                contains.add(message);
             }
-
+//          Store result of the parsed turn
             overallParse.add(contains);
         }
+
+//      Results of all turns being parsed.
         finalParseResults.add(overallParse);
+    }
+
+    private static ArrayList<ArrayList<ArrayList<String>>> finalMerge(ArrayList<ArrayList<ArrayList<String>>> finalParse) {
+
+//      Final return, see meaning of each layer in getJsonContent above.
+        ArrayList<ArrayList<ArrayList<String>>> mergedReturn = new ArrayList<>();
+
+//      Access each transcript individually.
+        for(ArrayList<ArrayList<String>> overallParse : finalParse) {
+            int intentIndex = 1;
+            ArrayList<ArrayList<String>> mergedResult = new ArrayList<>();
+
+            while (intentIndex <= overallParse.size()) {
+
+
+                ArrayList<String> turnToMerge = new ArrayList<>();
+                StringBuilder currMessage = new StringBuilder();
+                StringBuilder currIntent = new StringBuilder();
+
+//              Check if we are at the end of a successful transcript
+                if (intentIndex == overallParse.size()) {
+                    currMessage.append(overallParse.get(intentIndex - 1).get(0));
+                    currIntent.append("Null");
+                }
+                else {
+                    currMessage.append(overallParse.get(intentIndex - 1).get(0));
+                    currIntent.append(overallParse.get(intentIndex).get(0));
+                }
+
+                turnToMerge.add(String.valueOf(currMessage));
+
+//              Isolate messages of end turns of successful transcripts
+                if (!String.valueOf(currIntent).equals("Null")) {
+                    turnToMerge.add(String.valueOf(currIntent));
+                }
+
+                mergedResult.add(turnToMerge);
+                intentIndex = intentIndex + 2;
+            }
+            mergedReturn.add(mergedResult);
+        }
+        return mergedReturn;
     }
 
     private static void turnReader(JsonArray transcriptTop, ArrayList<JsonObject> turnsByKey) {
         // Find the turns within the flow which contain meaningful actions (i.e., not set-up or termination)
         for (JsonElement turnRaw : transcriptTop) {
             JsonObject turn = turnRaw.getAsJsonObject();
-//            System.out.println(turn.keySet());
             if (turn.keySet().contains("type") && turn.get("type").getAsString().equals("request")){
                 turnsByKey.add(turn);
             } else if (turn.keySet().contains("type") && turn.get("type").getAsString().equals("text")) {
                 turnsByKey.add(turn);
             }
-//            System.out.println(turn.get("type"));
+
         }
-//        System.out.println(turnsByKey);
+
     }
 
+// End of helper functions to getJsonContent()
 
 //Stores the APIKey in the apiAccess.properties files
 //    //Switched to static
