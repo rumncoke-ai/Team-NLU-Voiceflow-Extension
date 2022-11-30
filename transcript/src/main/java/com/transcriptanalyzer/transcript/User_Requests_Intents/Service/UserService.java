@@ -7,6 +7,8 @@ import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.Accoun
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     private ApiRepository apiRepository;
@@ -50,5 +52,9 @@ public class UserService {
     public void deleteALl() {
         apiRepository.deleteAll();
         accountRepository.deleteAll();
+    }
+
+    public List<API> getAPIList() {
+        return apiRepository.findAll();
     }
 }

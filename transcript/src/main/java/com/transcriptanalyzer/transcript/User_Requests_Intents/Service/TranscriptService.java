@@ -2,6 +2,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.google.gson.*;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.AccountRepository;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.TranscriptRepository;
 import lombok.AllArgsConstructor;
@@ -44,12 +45,22 @@ public class TranscriptService {
      *     Inner layer: Each element is a turn.
      *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
      */
+
+    //MOVE THIS TO ANOTHER FILE LATERRRRRR!!!!!
+    private static ApiRepository apiRepository;
+    private AccountRepository accountRepository;
+
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
 // Return the parsed results of the given chatbot's transcripts.
+        //List<API> apiList = apiRepository.findAll();
 
 //      Define the url to call to access the chatbot API.
         String apiKey = PropertiesReader.getProperty("api-key");
         String version = PropertiesReader.getProperty("api-version");
+
+//        String apiKey = apiList.get(0).getApiKey();
+//        String version =  apiList.get(0).getApiVersion();
+
         String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
 
         URL url = new URL(urlString);

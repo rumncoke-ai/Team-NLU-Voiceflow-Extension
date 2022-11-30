@@ -4,9 +4,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Account {
-    private String emailAddress;
-    private String password;
-    private String diagramID;
+    private final String emailAddress;
+    private final String password;
+    private final String diagramID;
 
     public Account(String emailAddress, String password, String diagramID) {
         this.emailAddress = emailAddress;

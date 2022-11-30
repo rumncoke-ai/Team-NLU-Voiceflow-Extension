@@ -1,5 +1,6 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +45,9 @@ public class UserRequestInteractor {
 
     public void deleteAll() {
         userService.deleteALl();
+    }
+
+    public List<API> getAPIList() {
+        return userService.getAPIList();
     }
 }

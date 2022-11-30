@@ -54,6 +54,11 @@ public class UserRequestController{
         return interactor.getBestIntents();
     }
 
+    @GetMapping("/apiFindAll") // Returns the top three intents to be added to the front end
+    public List<API> getApiList(){
+        return interactor.getAPIList();
+    }
+
 }
 
 

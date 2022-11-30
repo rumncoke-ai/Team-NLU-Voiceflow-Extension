@@ -100,6 +100,8 @@ public class Tree {
                     // take the best leaf data of the current child
                     LinkedHashMap<String, Integer> childBestLeaves = child.getBestLeafData();
 
+                    //Move inner for loop to a helper method
+
                     // for each entry of this child's best leaf data, merge the entry into leafData
                     for (Map.Entry<String, Integer> leaf: childBestLeaves.entrySet()) {
                         // get the intent and occurrence of the current entry
