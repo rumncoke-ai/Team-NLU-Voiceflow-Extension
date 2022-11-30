@@ -2,7 +2,6 @@ package com.transcriptanalyzer.transcript.Service;
 
 import com.transcriptanalyzer.transcript.Documents.Transcript;
 import com.transcriptanalyzer.transcript.Repository.TranscriptRepository;
-import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import org.json.simple.JSONArray;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-@AllArgsConstructor
 @Service
 public class TranscriptService {
     @Autowired

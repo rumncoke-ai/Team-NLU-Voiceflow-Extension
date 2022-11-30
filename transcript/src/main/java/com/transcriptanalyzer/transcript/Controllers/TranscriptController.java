@@ -2,8 +2,11 @@ package com.transcriptanalyzer.transcript.Controllers;
 
 import com.transcriptanalyzer.transcript.Documents.Transcript;
 import com.transcriptanalyzer.transcript.Service.TranscriptService;
+import com.transcriptanalyzer.transcript.Service.createBlocksVoiceflow;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,10 +16,16 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"}) // change this to the Netlify url
 public class TranscriptController {
     @Autowired
     private final TranscriptService transcriptService;
+
+    @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
+    public ResponseEntity getServiceName() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @GetMapping("/getAll")
     public List<Transcript> fetchAllTranscripts() {
         return transcriptService.getAllTranscripts();
@@ -49,6 +58,12 @@ public class TranscriptController {
             Transcript currTranscript = new Transcript("", transcriptContent);
             transcriptService.createTranscript(currTranscript);
         }
+    }
+
+    @PostMapping("/createBlock")
+    public void createVoiceflowBlock(@RequestBody String email, String password, String diagramID,
+                                     String intent1, String intent2, String intent3) throws Exception {
+        createBlocksVoiceflow.add_block(email, password, diagramID, intent1, intent2, intent3);
     }
 
     @PutMapping("/updateById/{id}")
