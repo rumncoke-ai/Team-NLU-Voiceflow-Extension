@@ -39,16 +39,4 @@ public class Transcript{
     }
 
 
-//    public void setId(String id) {
-//        this.id = id;
-//    }
-//
-//    public void setIntent(String intent) {
-//        this.intent = intent;
-//    }
-//
-//    public void setContent(String content) {
-//        this.content = content;
-//    }
-
 }

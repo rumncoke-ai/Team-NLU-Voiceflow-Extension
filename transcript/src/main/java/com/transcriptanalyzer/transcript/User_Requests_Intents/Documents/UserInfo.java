@@ -5,11 +5,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class UserInfo {
 
-    private String apiKey;
-    private String apiVersion;
-    private String emailAddress;
-    private String password;
-    private String diagramID;
+    private final String apiKey;
+    private final String apiVersion;
+    private final String emailAddress;
+    private final String password;
+    private final String diagramID;
 
 
     public UserInfo(String apiKey, String apiVersion, String emailAddress, String password, String diagramID) {

@@ -1,9 +1,7 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
-//import the Transcript Service class as something else to implement clean architecture (NOT POSSIBLE IN JAVA)
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.TranscriptService;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.UserRequestInteractor;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +18,55 @@ import java.util.*;
 @CrossOrigin(origins = "http://localhost:3000")
 
 public class UserRequestController{
-//    @Autowired
-//    private final TranscriptService transcriptService;
 
     @Autowired
     private final UserRequestInteractor interactor;
 
-
-    @PostMapping("/storeAPI") // Post mapping that stores user's api information and api version ID in the database
+    @PostMapping("/storeUserInfo") // Post mapping that stores user's api information and api version ID in the database
     public void storeUserInfo(@RequestBody UserInfo user) {
-        //transcriptService.storeAPIInfo(api);
         interactor.storeUserInfo(user);
     }
 
+
+    //REMOVE LATER
     @GetMapping("/cleanTranscript") // Returns an arraylist of all cleaned transcripts from voiceflow API
     public ArrayList<ArrayList<ArrayList<String>>>  getTranscriptData() throws IOException {
         return interactor.getTranscriptData();
+    }
+
+    @GetMapping("/cleanTranscript/api") // Returns an arraylist of all cleaned transcripts from voiceflow API
+    public ArrayList<ArrayList<ArrayList<String>>>  getTranscriptData_2(@RequestBody API api) throws IOException {
+        List<API> apiList = interactor.getAPIList();
+        API UserApi = apiList.get(0);
+        return interactor.getTranscriptData_2(UserApi);
+    }
+
+    @GetMapping("/threeIntents") // Returns the top three intents to be added to the front end
+    public ArrayList<List<String>> getTreeThreeIntents() throws IOException {
+        List<API> apiList = interactor.getAPIList();
+        API api = apiList.get(0);
+        ArrayList<List<String>> returnValue;
+        returnValue = interactor.getBestIntents(api);
+        interactor.deleteAll();
+        return returnValue;
+        //return interactor.getBestIntents();
+    }
+
+    @DeleteMapping("/deleteAll")
+    public void deleteAllTranscripts() {
+        interactor.deleteAll();
+    }
+
+
+    //REMOVE LATER
+    @GetMapping("/apiFindAll") // Returns the top three intents to be added to the front end
+    public List<API> getApiList(){
+        return interactor.getAPIList();
+    }
+
+    @GetMapping("/api") // Returns the top three intents to be added to the front end
+    public API getApi(){
+        return interactor.getAPIList().get(0);
     }
 
     @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
@@ -43,30 +74,21 @@ public class UserRequestController{
         return new ResponseEntity(HttpStatus.OK);
     }
 
-
-    //EDIT THE FOLLOWING CODE TO MATCH THE UPDATED TREE CODE
-    @GetMapping("/threeIntents") // Returns the top three intents to be added to the front end
-    public ArrayList<List<String>> getTreeThreeIntents() throws IOException {
-        //List<String> returnValue;
-        //returnValue = interactor.getTreeIntents();
-        //interactor.deleteAll();
-        //return returnValue;
-        return interactor.getBestIntents();
-    }
-
-    @GetMapping("/apiFindAll") // Returns the top three intents to be added to the front end
-    public List<API> getApiList(){
-        return interactor.getAPIList();
-    }
-
 }
 
 
 
 
-
-
-
+//
+//    @PostMapping("/storeAPI")
+//    public void storeAPI(@RequestBody API api) {
+//        interactor.storeAPI(api);
+//
+//    }
+//    @PostMapping("/storeAccount")
+//    public void storeAccount(@RequestBody Account account) {
+//        interactor.storeAccount(account);
+//    }
 //@GetMapping("/cleanTranscript/level/1") // this will return a list
 //    public ArrayList<String> getCleanedTranscriptLevelDown_1() throws IOException {
 //        //Intent 1

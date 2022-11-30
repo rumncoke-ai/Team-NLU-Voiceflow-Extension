@@ -5,19 +5,18 @@ import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.AccountRepository;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class UserService {
+
+    @Autowired
     private ApiRepository apiRepository;
-
+    @Autowired
     private AccountRepository accountRepository;
-
-//    public API getAPIInfo() {
-//        apiRepository.findAll();
-//    }
 
 
     // Inserts the API information -- both apiKey and apiVersion-- in MongoDB
@@ -49,7 +48,7 @@ public class UserService {
         storeAccountInfo(new Account(user.getEmailAddress(), user.getPassword(), user.getDiagramID()));
     }
 
-    public void deleteALl() {
+    public void deleteAll() {
         apiRepository.deleteAll();
         accountRepository.deleteAll();
     }
@@ -57,4 +56,6 @@ public class UserService {
     public List<API> getAPIList() {
         return apiRepository.findAll();
     }
+
+
 }

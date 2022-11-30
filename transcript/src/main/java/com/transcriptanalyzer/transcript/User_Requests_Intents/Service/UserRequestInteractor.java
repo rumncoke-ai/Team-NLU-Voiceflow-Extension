@@ -1,6 +1,7 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,10 @@ public class UserRequestInteractor {
 
 
     // Creates Instances of the transcript service and user service class to access methods
-
-    @Autowired
-    private TranscriptService transcriptService;
     @Autowired
     private UserService userService;
 
     private Tree tree;
-
-
 
     public void storeUserInfo(UserInfo user) {
         userService.storeUserInfo(user);
@@ -37,17 +33,21 @@ public class UserRequestInteractor {
         return TranscriptService.getJSONContent();
     }
 
-
-    public ArrayList<List<String>> getBestIntents() throws IOException {
-        Tree intentTree = new Tree(TranscriptService.getJSONContent());
+    public ArrayList<List<String>> getBestIntents(API api) throws IOException {
+        Tree intentTree = new Tree(TranscriptService.getJSONContent_2(api));
         return intentTree.getBestIntents();
     }
 
     public void deleteAll() {
-        userService.deleteALl();
+        userService.deleteAll();
     }
 
     public List<API> getAPIList() {
         return userService.getAPIList();
+    }
+
+
+    public ArrayList<ArrayList<ArrayList<String>>> getTranscriptData_2(API api) throws IOException {
+        return TranscriptService.getJSONContent_2(api);
     }
 }
