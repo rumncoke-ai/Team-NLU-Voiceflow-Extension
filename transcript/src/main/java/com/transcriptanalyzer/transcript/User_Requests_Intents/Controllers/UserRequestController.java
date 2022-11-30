@@ -15,7 +15,7 @@ import java.util.*;
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://locarlhost:3000")
 
 public class UserRequestController{
 
