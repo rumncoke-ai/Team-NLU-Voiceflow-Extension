@@ -2,6 +2,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.BlockRequest;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.UserRequestInteractor;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.createBlocksVoiceflow;
@@ -17,7 +18,8 @@ import java.util.*;
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
+@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
 
 public class UserRequestController{
 
@@ -35,11 +37,14 @@ public class UserRequestController{
     }
 
     @PostMapping("/createBlock")
-    public void createVoiceflowBlock(@RequestBody Account account,
-                                     String intent1, String intent2, String intent3) throws Exception {
-        String email = account.getEmailAddress();
-        String password = account.getPassword();
-        String diagramID = account.getDiagramID();
+    public void createVoiceflowBlock(@RequestBody BlockRequest blockRequest) throws Exception {
+        String email = blockRequest.getEmailAddress();
+        String password = blockRequest.getPassword();
+        String diagramID = blockRequest.getDiagramID();
+        String intent1 = blockRequest.getIntent1();
+        String intent2 = blockRequest.getIntent2();
+        String intent3 = blockRequest.getIntent3();
+        System.out.println(intent1);
         createBlocksVoiceflow.add_block(email, password, diagramID, intent1, intent2, intent3);
     }
 
