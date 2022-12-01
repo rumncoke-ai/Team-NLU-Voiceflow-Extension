@@ -2,12 +2,13 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.google.gson.*;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.AccountRepository;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.TranscriptRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import java.io.IOException;
@@ -19,39 +20,8 @@ import java.io.InputStreamReader;
 @AllArgsConstructor
 @Service
 
-//Switching everything to non-static
+
 public class TranscriptService {
-    private TreeMap<String, Integer> intentTreeMap;
-
-    private ApiRepository apiRepository;
-
-    public static ArrayList<String> getIntents() throws IOException {
-        ArrayList<String> list = new ArrayList<>();
-    //Intent 1
-        String intent_1 = getJSONContent().get(0).get(1).get(0).replaceAll("[:{\"}]","");
-        intent_1 = intent_1.substring(11);
-        String intent_2 = getJSONContent().get(0).get(3).get(0).replaceAll("[:{\"}]","");
-        intent_2 = intent_2.substring(11);
-        String intent_3 = getJSONContent().get(2).get(1).get(0).replaceAll("[:{\"}]","");
-        intent_3 = intent_3.substring(11);
-
-
-        list.add(intent_1);
-        list.add(intent_2);
-        list.add(intent_3);
-
-//      System.out.println(list);
-
-        return list;
-    }
-
-    public void storeAPIInfo(UserAPI api) {
-        apiRepository.insert(api);
-    }
-    public void storeAPIInfoProperties(UserAPI api) {
-        PropertiesWriter.setProperty("api-key", api.getApiKey());
-        PropertiesWriter.setProperty("api-version", api.getApiVersion());
-    }
 
     /**
      * Method getJSONContent.
@@ -64,12 +34,77 @@ public class TranscriptService {
      *     Inner layer: Each element is a turn.
      *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
      */
+
+    /**
+     * Method getJSONContent.
+     *
+     * @return Return all transcript data from attached to the chatbot from the set apiKey and Version ID
+     *
+     * Data is cleaned and exibits both messages and intents specific format includes:
+     *     Outermost layer: Stores overall result for all transcripts.
+     *     Middle Layer: Each element is a full transcript.
+     *     Inner layer: Each element is a turn.
+     *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
+     */
+
+    //MOVE THIS TO ANOTHER FILE LATERRRRRR!!!!!
+
+//    @Autowired
+//    private static ApiRepository apiRepository;
+//    @Autowired
+//    private AccountRepository accountRepository;
+
+    public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent_2(API api) throws IOException {
+// Return the parsed results of the given chatbot's transcripts.
+;
+
+//      Define the url to call to access the chatbot API.
+
+        String apiKey = api.getApiKey();
+        String version =  api.getApiVersion();
+
+        String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
+
+        URL url = new URL(urlString);
+
+
+//      Return the result of the API call (i.e., all the stored transcripts) as one long string in JSON format.
+        String jsonString = retrieveJsonString(url);
+
+//      Parse the API return string to form a JsonArray
+        JsonArray dataArr = new Gson().fromJson(jsonString, JsonArray.class);
+
+//      Define the object which will contain all of the seperated turns
+        ArrayList<ArrayList<ArrayList<String>>> finalParseResults = new ArrayList<>();
+
+        flowIterator2(finalParseResults, dataArr);
+
+//  Return the parsed transcripts in the following format:
+//  ArrayList<ArrayList<ArrayList<String>>>
+//  Where the layers represent:
+
+//  Outermost Layer ArrayList<>: Outer container to store the overall results for each transcript.
+
+//  Middle Layer ArrayList<>: Each element represents one full transcript that was parsed.
+
+//  Inner layer ArrayList<>: Each element represents a pair of turns from the given transcript; the first string
+//  represents a message from the chatbot, and the subsequent string represents the intent given by the user in
+//  response. Note that if there is only one string, it is a termination message when the chatbot ends.
+
+        return finalMerge(finalParseResults);
+        //return finalParseResults;
+    }
+
+
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent() throws IOException {
 // Return the parsed results of the given chatbot's transcripts.
 
-//      Define the url to call to access the chatbot API.
         String apiKey = PropertiesReader.getProperty("api-key");
         String version = PropertiesReader.getProperty("api-version");
+
+
+//      Define the url to call to access the chatbot API.
+
         String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
 
         URL url = new URL(urlString);
@@ -224,7 +259,32 @@ public class TranscriptService {
 
     }
 
-// End of helper functions to getJsonContent()
+    public void deleteALl() {
+
+    }
+
+
+//    public static ArrayList<String> getIntents() throws IOException {
+//        ArrayList<String> list = new ArrayList<>();
+//        //Intent 1
+//        String intent_1 = getJSONContent().get(0).get(1).get(0).replaceAll("[:{\"}]","");
+//        intent_1 = intent_1.substring(11);
+//        String intent_2 = getJSONContent().get(0).get(3).get(0).replaceAll("[:{\"}]","");
+//        intent_2 = intent_2.substring(11);
+//        String intent_3 = getJSONContent().get(2).get(1).get(0).replaceAll("[:{\"}]","");
+//        intent_3 = intent_3.substring(11);
+//
+//
+//        list.add(intent_1);
+//        list.add(intent_2);
+//        list.add(intent_3);
+//
+//        return list;
+//    }
+
+
+
+
 
 //Stores the APIKey in the apiAccess.properties files
 //    //Switched to static
