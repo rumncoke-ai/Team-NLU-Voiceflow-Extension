@@ -1,7 +1,9 @@
-package com.transcriptanalyzer.transcript.Service;
+package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@Service
 public class getToken {
 
     public static String login(String email, String password) throws IOException {

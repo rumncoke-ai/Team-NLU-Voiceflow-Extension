@@ -1,4 +1,4 @@
-package com.transcriptanalyzer.transcript.Service;
+package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -7,6 +7,7 @@ import java.net.URL;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.getToken;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

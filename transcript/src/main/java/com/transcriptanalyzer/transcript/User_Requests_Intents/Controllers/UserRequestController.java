@@ -1,8 +1,10 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.UserRequestInteractor;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.createBlocksVoiceflow;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,18 +17,31 @@ import java.util.*;
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://locarlhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
 
 public class UserRequestController{
 
     @Autowired
     private final UserRequestInteractor interactor;
 
+    @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
+    public ResponseEntity getServiceName() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @PostMapping("/storeUserInfo") // Post mapping that stores user's api information and api version ID in the database
     public void storeUserInfo(@RequestBody UserInfo user) {
         interactor.storeUserInfo(user);
     }
 
+    @PostMapping("/createBlock")
+    public void createVoiceflowBlock(@RequestBody Account account,
+                                     String intent1, String intent2, String intent3) throws Exception {
+        String email = account.getEmailAddress();
+        String password = account.getPassword();
+        String diagramID = account.getDiagramID();
+        createBlocksVoiceflow.add_block(email, password, diagramID, intent1, intent2, intent3);
+    }
 
     //REMOVE LATER
     @GetMapping("/cleanTranscript") // Returns an arraylist of all cleaned transcripts from voiceflow API
@@ -67,11 +82,6 @@ public class UserRequestController{
     @GetMapping("/api") // Returns the top three intents to be added to the front end
     public API getApi(){
         return interactor.getAPIList().get(0);
-    }
-
-    @GetMapping() // Get mapping to avoid AWS pinging the base route and saying the deployment health is not okay
-    public ResponseEntity getServiceName() {
-        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
