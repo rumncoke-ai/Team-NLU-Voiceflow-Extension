@@ -1,86 +1,128 @@
 package com.transcriptanalyzer.transcript;
 
-import com.transcriptanalyzer.transcript.Tree;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.Tree;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import com.transcriptanalyzer.transcript.StringToArrayList;
 
 class TreeTest {
+    /*
+    There are no real messages from the bot in the transcripts as these do not affect the tests (fake MESSAGE used)
+    This is for simplification as they have no effect on intent calculation, only the intent part of transcripts are relevant
+    */
+    // example of pizza store chatbot data with 3 transcripts
     public ArrayList<ArrayList<ArrayList<String>>> getTestPizzaData(){
-        ArrayList<ArrayList<ArrayList<String>>> testData = new ArrayList<>();
+        String strTestData = "[" +
+                "[[MESSAGE,Remake],[MESSAGE,Order], [MESSAGE,Veggie], [MESSAGE]], " +
+                "[[MESSAGE,Remake],[MESSAGE,Order], [MESSAGE,Pepperoni], [MESSAGE]], " +
+                "[[MESSAGE,Order pizza],[MESSAGE,Order pizza]]" +
+                "]";
 
-        // init test data for transcript 1
-        ArrayList<String> turn1T1 = new ArrayList<String>();
-        ArrayList<String> turn2T1 = new ArrayList<String>();
-        ArrayList<String> turn3T1 = new ArrayList<String>();
-        ArrayList<String> turn4T1 = new ArrayList<String>();
+        return StringToArrayList.getList(strTestData);
+    }
 
-        // init test data for transcript 2
-        ArrayList<String> turn1T2 = new ArrayList<String>();
-        ArrayList<String> turn2T2 = new ArrayList<String>();
-        ArrayList<String> turn3T2 = new ArrayList<String>();
-        ArrayList<String> turn4T2 = new ArrayList<String>();
+    // example of retailer chatbot data with 8 transcripts
+    public ArrayList<ArrayList<ArrayList<String>>> getTestRetailerData(){
+        String strTestData = "[" +
+                "[[MESSAGE,Order], [MESSAGE,Shoes], [MESSAGE,Jordan's], [MESSAGE]], " +
+                "[[MESSAGE,Career], [MESSAGE,Management]], " +
+                "[[MESSAGE,Career], [MESSAGE,Employee]], " +
+                "[[MESSAGE,Order], [MESSAGE,Shoes], [MESSAGE,Nike], [MESSAGE]], " +
+                "[[MESSAGE,Order], [MESSAGE,Jacket], [MESSAGE,Nike], [MESSAGE]], " +
+                "[[MESSAGE,Sales], [MESSAGE,Shoes], [MESSAGE,Adidas], [MESSAGE]] " +
+                "[[MESSAGE,Refund], [MESSAGE,Shoes], [MESSAGE,Nike], [MESSAGE]] " +
+                "[[MESSAGE,Order], [MESSAGE,Shoes], [MESSAGE,Jordan's], [MESSAGE]]]";
 
-        // init test data for transcript 3
-        ArrayList<String> turn1T3 = new ArrayList<String>();
-        ArrayList<String> turn2T3 = new ArrayList<String>();
+        return StringToArrayList.getList(strTestData);
+    }
 
-        // init test data for transcript 1
-        ArrayList<ArrayList<String>> transcript1 = new ArrayList<ArrayList<String>>();
-        ArrayList<ArrayList<String>> transcript2 = new ArrayList<ArrayList<String>>();
-        ArrayList<ArrayList<String>> transcript3 = new ArrayList<ArrayList<String>>();
+    // example of edge case conversation where data is insufficient (not enough nodes)
+    // Note: intents called "None" are ignored in tree creation
+    public ArrayList<ArrayList<ArrayList<String>>> getInsufficientData(){
+        String strTestData = "[" +
+                "[[MESSAGE,Order], [MESSAGE,Shoes]], " +
+                "[[MESSAGE,None]]]";
 
-        // creating first transcript
-        turn1T1.add("Hi, welcome to Generic Pizza Place (tm)! What can I help you with today?");
-        turn1T1.add("Remake");
-        transcript1.add(turn1T1);
-        turn2T1.add("Sorry, could you rephrase that for me?");
-        turn2T1.add("Order");
-        transcript1.add(turn2T1);
-        turn3T1.add("We have 3 different kinds of pizzas available with one being on special per day. The choices are chesse, veggie, and pepperoni.");
-        turn3T1.add("Veggie");
-        transcript1.add(turn3T1);
-        turn4T1.add("We will make you a veggie pizza. Please come pick it up in 20 minutes.");
-        transcript1.add(turn4T1);
+        return StringToArrayList.getList(strTestData);
+    }
 
-        // creating second transcript
-        turn1T2.add("Hi, welcome to Generic Pizza Place (tm)! What can I help you with today?");
-        turn1T2.add("Remake");
-        transcript2.add(turn1T2);
-        turn2T2.add("Sorry, could you rephrase that for me?");
-        turn2T2.add("Order");
-        transcript2.add(turn2T2);
-        turn3T2.add("We have 3 different kinds of pizzas available with one being on special per day. The choices are chesse, veggie, and pepperoni.");
-        turn3T2.add("Pepperoni");
-        transcript2.add(turn3T2);
-        turn4T2.add("We will make you a pepperoni pizza. Please come pick it up in 20 minutes.");
-        transcript2.add(turn4T2);
-
-        // creating third transcript
-        turn1T3.add("Hi, welcome to Generic Pizza Place (tm)! What can I help you with today?");
-        turn1T3.add("Order pizza");
-        transcript3.add(turn1T3);
-        turn2T3.add("Sorry, could you rephrase that for me?");
-        turn2T3.add("Order pizza");
-        transcript3.add(turn2T3);
-
-        // adding the transcripts
-        testData.add(transcript1);
-        testData.add(transcript2);
-        testData.add(transcript3);
-
-        return testData;
+    // Pizza ordering service tests
+    @Test
+    void testPizzaTreeIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getTestPizzaData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[Order pizza, Order, Remake]",
+                IntentTree.getBestTreeIntents().toString());
     }
 
     @Test
-    // a test of transcripts from conversations with a pizza ordering service
-    // 3 transcripts with 2-3 turns in interactions
-    void testPizzaTree(){
+    void testPizzaTreeLeafIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getTestPizzaData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[Veggie, Pepperoni, Order pizza]",
+                IntentTree.getBestLeafIntents().toString());
+    }
+
+    @Test
+    void testPizzaTreeCombinedIntents(){
         ArrayList<ArrayList<ArrayList<String>>> testData = getTestPizzaData();
         var IntentTree = new Tree(testData);
         assertEquals("[[Order pizza, Order, Remake], [Veggie, Pepperoni, Order pizza]]",
                 IntentTree.getBestIntents().toString());
     }
+
+    // Retailer service tests
+    @Test
+    void testRetailerTreeIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getTestRetailerData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[Shoes, Order, Nike]",
+                IntentTree.getBestTreeIntents().toString());
+    }
+
+    @Test
+    void testRetailerTreeLeafIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getTestRetailerData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[Nike, Jordan's, Management]",
+                IntentTree.getBestLeafIntents().toString());
+    }
+
+    @Test
+    void testRetailerTreeCombinedIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getTestRetailerData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[[Shoes, Order, Nike], [Nike, Jordan's, Management]]",
+                IntentTree.getBestIntents().toString());
+    }
+
+    // Insufficient data tests
+    @Test
+    void testInsufficientTreeIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getInsufficientData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[Order, Shoes, Insufficient Data]",
+                IntentTree.getBestTreeIntents().toString());
+    }
+
+    @Test
+    void testInsufficientTreeLeafIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getInsufficientData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[Shoes, Insufficient Data, Insufficient Data]",
+                IntentTree.getBestLeafIntents().toString());
+    }
+
+    @Test
+    void testInsufficientTreeCombinedIntents(){
+        ArrayList<ArrayList<ArrayList<String>>> testData = getInsufficientData();
+        var IntentTree = new Tree(testData);
+        assertEquals("[[Order, Shoes, Insufficient Data], [Shoes, Insufficient Data, Insufficient Data]]",
+                IntentTree.getBestIntents().toString());
+    }
+
+
 }
