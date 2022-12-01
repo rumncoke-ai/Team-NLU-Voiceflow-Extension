@@ -46,14 +46,6 @@ public class TranscriptService {
      *     Inner layer: Each element is a turn.
      *     String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
      */
-
-    //MOVE THIS TO ANOTHER FILE LATERRRRRR!!!!!
-
-//    @Autowired
-//    private static ApiRepository apiRepository;
-//    @Autowired
-//    private AccountRepository accountRepository;
-
     public static ArrayList<ArrayList<ArrayList<String>>> getJSONContent_2(API api) throws IOException {
 // Return the parsed results of the given chatbot's transcripts.
 ;

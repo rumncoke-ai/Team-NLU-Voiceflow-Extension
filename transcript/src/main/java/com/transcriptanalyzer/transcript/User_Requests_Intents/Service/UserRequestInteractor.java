@@ -33,7 +33,7 @@ public class UserRequestInteractor {
         return TranscriptService.getJSONContent();
     }
 
-    public ArrayList<List<String>> getBestIntents(API api) throws IOException {
+    public ArrayList<ArrayList<String>> getBestIntents(API api) throws IOException {
         Tree intentTree = new Tree(TranscriptService.getJSONContent_2(api));
         return intentTree.getBestIntents();
     }

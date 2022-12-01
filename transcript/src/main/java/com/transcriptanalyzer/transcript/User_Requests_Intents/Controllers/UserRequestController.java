@@ -42,10 +42,10 @@ public class UserRequestController{
     }
 
     @GetMapping("/threeIntents") // Returns the top three intents to be added to the front end
-    public ArrayList<List<String>> getTreeThreeIntents() throws IOException {
+    public ArrayList<ArrayList<String>> getTreeThreeIntents() throws IOException {
         List<API> apiList = interactor.getAPIList();
         API api = apiList.get(0);
-        ArrayList<List<String>> returnValue;
+        ArrayList<ArrayList<String>> returnValue;
         returnValue = interactor.getBestIntents(api);
         interactor.deleteAll();
         return returnValue;
