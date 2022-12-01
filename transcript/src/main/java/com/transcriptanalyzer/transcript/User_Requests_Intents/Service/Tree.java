@@ -154,9 +154,11 @@ public class Tree {
     //martin: create top 3 for leaves
     public ArrayList<String> getBestLeafIntents() {
 
+
         // get a hash map that is mapping intent to occurrences of the highest occurring intents of all leaves.
         // in descending order.
         LinkedHashMap<String, Integer> bestLeafData = this.treeRootNode.getBestLeafData();
+
 
         // return a list containing the keys of that hash map; the best intents themselves
         return fillArrayList(new ArrayList<>(bestLeafData.keySet()));
@@ -178,3 +180,4 @@ public class Tree {
         return list;
     }
 }
+

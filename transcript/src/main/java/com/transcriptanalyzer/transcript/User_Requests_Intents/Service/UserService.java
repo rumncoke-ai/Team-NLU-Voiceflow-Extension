@@ -1,14 +1,21 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserAPI;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.AccountRepository;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Repository.ApiRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
 public class UserService {
-    private ApiRepository apiRepository;
 
+    @Autowired
+    private ApiRepository apiRepository;
+    @Autowired
     private AccountRepository accountRepository;
 
 
@@ -18,7 +25,7 @@ public class UserService {
      * Method storeAPIInfo
      *  Inserts the API information -- both apiKey and apiVersion-- in MongoDB
      */
-    public void storeAPIInfo(UserAPI api) {
+    public void storeAPIInfo(API api) {
         apiRepository.insert(api);
     }
 
@@ -37,7 +44,18 @@ public class UserService {
      *  Inserts the Account information -- email address, password, and diagram ID-- in MongoDB
      */
     public void storeUserInfo(UserInfo user) {
-        storeAPIInfo(new UserAPI(user.getApiKey(), user.getApiVersion()));
+        storeAPIInfo(new API(user.getApiKey(), user.getApiVersion()));
         storeAccountInfo(new Account(user.getEmailAddress(), user.getPassword(), user.getDiagramID()));
     }
+
+    public void deleteAll() {
+        apiRepository.deleteAll();
+        accountRepository.deleteAll();
+    }
+
+    public List<API> getAPIList() {
+        return apiRepository.findAll();
+    }
+
+
 }
