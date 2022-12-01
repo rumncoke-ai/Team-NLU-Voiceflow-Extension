@@ -124,5 +124,4 @@ class TreeTest {
                 IntentTree.getBestIntents().toString());
     }
 
-
 }
