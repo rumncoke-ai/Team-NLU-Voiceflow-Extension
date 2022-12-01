@@ -49,7 +49,7 @@ public class UserRequestController{
         returnValue = interactor.getBestIntents(api);
         interactor.deleteAll();
         return returnValue;
-        //return interactor.getBestIntents();
+        //return interactor.getBestIntents(api);
     }
 
     @DeleteMapping("/deleteAll")

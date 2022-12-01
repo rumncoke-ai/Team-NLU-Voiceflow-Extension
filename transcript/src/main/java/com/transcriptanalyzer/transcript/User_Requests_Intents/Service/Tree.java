@@ -1,13 +1,11 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 // Assume we are producing one tree for a certain transcript in the ArrayList of transcripts
-@Service
 public class Tree {
     private Node treeRootNode;
     private HashMap<String, Integer> counts;
@@ -16,7 +14,7 @@ public class Tree {
     // intents organized in order of their turn in their respective transcript
     public Tree(ArrayList<ArrayList<ArrayList<String>>> transcripts) {
         // root of tree
-        this.treeRootNode = new Node("Root", null);
+        this.treeRootNode = new Node("Insufficient Data", null);
         Node start = this.treeRootNode;
         this.counts = new HashMap<String, Integer>();
 
@@ -100,8 +98,6 @@ public class Tree {
                     // take the best leaf data of the current child
                     LinkedHashMap<String, Integer> childBestLeaves = child.getBestLeafData();
 
-                    //Move inner for loop to a helper method
-
                     // for each entry of this child's best leaf data, merge the entry into leafData
                     for (Map.Entry<String, Integer> leaf: childBestLeaves.entrySet()) {
                         // get the intent and occurrence of the current entry
@@ -144,39 +140,41 @@ public class Tree {
     }
 
     // get a list of the three nodes with the greatest occurrences sorted in decreasing order
-    public List<String> getBestTreeIntents(){
+    public ArrayList<String> getBestTreeIntents(){
         // compares each value and get the top 3, return key list attributed to these top 3
-        return this.counts.entrySet().stream().sorted(
+        List<String> treeIntentsList = this.counts.entrySet().stream().sorted(
                 Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).map(
                 Map.Entry::getKey).collect(Collectors.toList());
+
+        ArrayList<String> treeIntentsArrayList = new ArrayList<String>(treeIntentsList);
+        return fillArrayList(treeIntentsArrayList);
+
     }
 
     //martin: create top 3 for leaves
-    public List<String> getBestLeafIntents() {
+    public ArrayList<String> getBestLeafIntents() {
 
         // get a hash map that is mapping intent to occurrences of the highest occurring intents of all leaves.
         // in descending order.
         LinkedHashMap<String, Integer> bestLeafData = this.treeRootNode.getBestLeafData();
 
         // return a list containing the keys of that hash map; the best intents themselves
-        return new ArrayList<>(bestLeafData.keySet());
+        return fillArrayList(new ArrayList<>(bestLeafData.keySet()));
     }
 
     // get both sets of the top 3 intents
-    public ArrayList<List<String>> getBestIntents(){
-        ArrayList<List<String>> options = new ArrayList<>(2);
+    public ArrayList<ArrayList<String>> getBestIntents(){
+        ArrayList<ArrayList<String>> options = new ArrayList<>(2);
         options.add(this.getBestTreeIntents());
         options.add(this.getBestLeafIntents());
 
         return options;
     }
-}
 
-/*
-ArrayList<ArrayList<ArrayList<String>>>
-such that:
-Outermost layer: Stores overall result for all transcripts.
-Middle Layer: each element is a full transcript.
-Inner layer: each element is a turn.
-String: either a user intent or bot message in the format "message: " + the actual message (same for intents)."
-*/
+    public ArrayList<String> fillArrayList(ArrayList<String> list) {
+        while (list.size() < 3){
+            list.add("Insufficient Data");
+        }
+        return list;
+    }
+}
