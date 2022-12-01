@@ -1,11 +1,14 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 // Assume we are producing one tree for a certain transcript in the ArrayList of transcripts
+
+@Service
 public class Tree {
     private Node treeRootNode;
     private HashMap<String, Integer> counts;
