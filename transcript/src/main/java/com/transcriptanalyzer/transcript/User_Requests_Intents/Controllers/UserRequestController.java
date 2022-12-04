@@ -22,8 +22,8 @@ import java.util.Base64.Decoder;
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
-//@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
 
 public class UserRequestController{
 
