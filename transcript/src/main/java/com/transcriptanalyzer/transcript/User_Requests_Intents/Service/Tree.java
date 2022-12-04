@@ -1,13 +1,14 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
-// Assume we are producing one tree for a certain transcript in the ArrayList of transcripts
-
+/*
+Tree data structure used to organize intents coming from nested arraylists of transcripts
+Includes methods to extract the best (the highest occurrence) intents from the entire tree,
+and also the best intents from just the leaf nodes
+*/
 @Service
 public class Tree {
     private Node treeRootNode;
@@ -17,7 +18,7 @@ public class Tree {
     // intents organized in order of their turn in their respective transcript
     public Tree(ArrayList<ArrayList<ArrayList<String>>> transcripts) {
         // root of tree
-        this.treeRootNode = new Node("Insufficient Data", null);
+        this.treeRootNode = new Node("Insufficient Data");
         Node start = this.treeRootNode;
         this.counts = new HashMap<String, Integer>();
 
@@ -46,13 +47,11 @@ public class Tree {
         private final String intent;
         // # of number it has appeared in its respective turn
         private int occurrences;
-        private Node parent;
         private ArrayList<Node> children;
 
-        public Node(String intent, Node parent){
+        public Node(String intent){
             this.intent = intent;
             this.occurrences = 1;
-            this.parent = parent;
             this.children = new ArrayList<Node>();
         }
 
@@ -66,7 +65,7 @@ public class Tree {
                 // if the intent is not a child of the node
             } else {
                 // create the new node and add it as a child of the parent node
-                Node newChildNode = new Node(intent, this);
+                Node newChildNode = new Node(intent);
                 this.children.add(newChildNode);
                 return newChildNode;
             }
@@ -82,6 +81,40 @@ public class Tree {
             return null;
         }
 
+        // helper methods for determining best leaf nodes (highest occurrences)
+        public LinkedHashMap<String, Integer> mergeLeafData(LinkedHashMap<String, Integer> leafData){
+            // for each child, get its best leaf data and merge it all into leafData
+            for (Node child: this.children) {
+                LinkedHashMap<String, Integer> childBestLeaves = child.getBestLeafData(); // take the best leaf data of the current child
+                // for each entry of this child's best leaf data, merge the entry into leafData
+                for (Map.Entry<String, Integer> leaf: childBestLeaves.entrySet()) {
+                    // get the intent and occurrence of the current entry
+                    String intent = leaf.getKey();
+                    Integer occurrences = leaf.getValue();
+                    // merge it into leaf data. If an occurrence is new, it is added to the LinkedHashMap.
+                    // If it already exists, their values are summed using Integer::sum
+                    leafData.merge(intent, occurrences, Integer::sum);
+                }
+            }
+            return leafData;
+        }
+
+        public LinkedHashMap<String, Integer> organizeBestChildren(int last_index, List<Map.Entry<String, Integer>> leafDataEntries, LinkedHashMap<String, Integer> bestLeafData){
+            // for each index of the entries we want
+            for (int i = 0; i <= last_index; i++) {
+                // directly extract the key and value at that index
+                String key = leafDataEntries.get(i).getKey();
+                Integer value = leafDataEntries.get(i).getValue();
+
+                // put them into the new sorted map. Has 0 to 3 values in it. In the context of our problem,
+                // should have 1 to 3.
+                // we can put instead of merging without overwriting because we know the entries in leafDataEntries
+                // are unique; they were created by merging entries.
+                bestLeafData.put(key, value);
+            }
+            return bestLeafData;
+        }
+
         // return a hashmap mapping the 3 leaf intents with most occurrences to their occurrences in descending order
         public LinkedHashMap<String, Integer> getBestLeafData() {
             // create a list for the best leaf data of all children
@@ -89,54 +122,25 @@ public class Tree {
             // create a placeholder list for the top three leaf intents
             LinkedHashMap<String, Integer> bestLeafData = new LinkedHashMap<>();
 
-            // if this is a leaf node (has no children), set the best leaf data to its own intent and occurrences
-            // so that it may be returned
+            // if this is a leaf node (has no children), set the best leaf data to its own intent and occurrences to return it
             if (this.children.isEmpty()) {
                 bestLeafData.put(this.intent, this.occurrences);
             }
             // otherwise, get the best 3 intents and their occurrences from this node's children
             else {
-                // for each child, get its best leaf data and merge it all into leafData
-                for (Node child: this.children) {
-                    // take the best leaf data of the current child
-                    LinkedHashMap<String, Integer> childBestLeaves = child.getBestLeafData();
-
-                    // for each entry of this child's best leaf data, merge the entry into leafData
-                    for (Map.Entry<String, Integer> leaf: childBestLeaves.entrySet()) {
-                        // get the intent and occurrence of the current entry
-                        String intent = leaf.getKey();
-                        Integer occurrences = leaf.getValue();
-
-                        // merge it into leaf data. If an occurrence is new, it is added to the LinkedHashMap.
-                        // If it already exists, their values are summed using Integer::sum
-                        leafData.merge(intent, occurrences, Integer::sum);
-                    }
-                }
-
+                // merge leaf data recursively and update hashmap to each intent occurrence pair
+                leafData = mergeLeafData(leafData);
                 // move the leaves into a list
                 List<Map.Entry<String, Integer>> leafDataEntries = new ArrayList<>(leafData.entrySet());
-
                 // sort the list using the Map.Entry comparing by value comparator in reverse order
                 // this sorts each hash map entry, which is stored in a list, in descending order
                 leafDataEntries.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
-
                 // determine how many entries to take from the list
                 // take the last index of the entries we will take. no more than 3,
                 // and no more than the number of elements in the list
                 int last_index = java.lang.Math.min(2, leafDataEntries.size() - 1);
-
-                // for each index of the entries we want
-                for (int i = 0; i <= last_index; i++) {
-                    // directly extract the key and value at that index
-                    String key = leafDataEntries.get(i).getKey();
-                    Integer value = leafDataEntries.get(i).getValue();
-
-                    // put them into the new sorted map. Has 0 to 3 values in it. In the context of our problem,
-                    // should have 1 to 3.
-                    // we can put instead of merging without overwriting because we know the entries in leafDataEntries
-                    // are unique; they were created by merging entries.
-                    bestLeafData.put(key, value);
-                }
+                // organize best leaf data and update hashmap to obtain the best intent occurrence pairs
+                bestLeafData = organizeBestChildren(last_index, leafDataEntries, bestLeafData);
             }
             return bestLeafData;
         }
@@ -156,12 +160,9 @@ public class Tree {
 
     //martin: create top 3 for leaves
     public ArrayList<String> getBestLeafIntents() {
-
-
         // get a hash map that is mapping intent to occurrences of the highest occurring intents of all leaves.
         // in descending order.
         LinkedHashMap<String, Integer> bestLeafData = this.treeRootNode.getBestLeafData();
-
 
         // return a list containing the keys of that hash map; the best intents themselves
         return fillArrayList(new ArrayList<>(bestLeafData.keySet()));
@@ -183,4 +184,5 @@ public class Tree {
         return list;
     }
 }
+
 

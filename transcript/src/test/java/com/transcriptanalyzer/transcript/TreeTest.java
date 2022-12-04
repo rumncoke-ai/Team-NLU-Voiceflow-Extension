@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-import com.transcriptanalyzer.transcript.StringToArrayList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TreeTest {
     /*
