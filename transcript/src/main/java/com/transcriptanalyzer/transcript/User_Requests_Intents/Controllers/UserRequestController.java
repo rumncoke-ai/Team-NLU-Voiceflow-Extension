@@ -2,6 +2,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Controllers;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account;
+import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.BlockRequest;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.UserRequestInteractor;
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.createBlocksVoiceflow;
@@ -12,12 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import java.util.Base64.Decoder;
 
 @RestController
 @RequestMapping("api/v1/transcripts")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
+@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = {"http://localhost:3000", "https://nluchatbotpromptanalyzer.netlify.app/"})
 
 public class UserRequestController{
 
@@ -35,11 +41,14 @@ public class UserRequestController{
     }
 
     @PostMapping("/createBlock")
-    public void createVoiceflowBlock(@RequestBody Account account,
-                                     String intent1, String intent2, String intent3) throws Exception {
-        String email = account.getEmailAddress();
-        String password = account.getPassword();
-        String diagramID = account.getDiagramID();
+    public void createVoiceflowBlock(@RequestBody BlockRequest blockRequest) throws Exception {
+        String email = blockRequest.getEmailAddress();
+        String password = blockRequest.getPassword();
+        String diagramID = blockRequest.getDiagramID();
+        String intent1 = blockRequest.getIntent1();
+        String intent2 = blockRequest.getIntent2();
+        String intent3 = blockRequest.getIntent3();
+        System.out.println(intent1);
         createBlocksVoiceflow.add_block(email, password, diagramID, intent1, intent2, intent3);
     }
 
@@ -54,6 +63,34 @@ public class UserRequestController{
         List<API> apiList = interactor.getAPIList();
         API UserApi = apiList.get(0);
         return interactor.getTranscriptData_2(UserApi);
+    }
+
+    @GetMapping("/threeIntents/api") // Returns the top three intents to be added to the front end
+    public ArrayList<ArrayList<String>> getTreeThreeIntentsWithAPI
+            (@RequestHeader("Authorization") String authHeader) throws IOException {
+
+
+        System.out.println(authHeader);
+
+        String encoded = authHeader.substring(6);
+
+        System.out.println(encoded);
+
+        byte[] decoded = Base64.getDecoder().decode(encoded);
+
+        System.out.println(Arrays.toString(decoded));
+
+        String decodedString = new String(decoded, StandardCharsets.UTF_8);
+
+        System.out.println(decodedString);
+
+
+        //assumes api key and version do not have semicolons in them
+        String[] apiInfo = decodedString.split(":");
+
+        API api = new API(apiInfo[0], apiInfo[1]);
+
+        return interactor.getBestIntents(api);
     }
 
     @GetMapping("/threeIntents") // Returns the top three intents to be added to the front end
