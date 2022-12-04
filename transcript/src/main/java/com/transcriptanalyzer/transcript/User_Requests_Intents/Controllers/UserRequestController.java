@@ -13,7 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import java.util.Base64.Decoder;
 
 @RestController
 @RequestMapping("api/v1/transcripts")
@@ -59,6 +63,34 @@ public class UserRequestController{
         List<API> apiList = interactor.getAPIList();
         API UserApi = apiList.get(0);
         return interactor.getTranscriptData_2(UserApi);
+    }
+
+    @GetMapping("/threeIntents/api") // Returns the top three intents to be added to the front end
+    public ArrayList<ArrayList<String>> getTreeThreeIntentsWithAPI
+            (@RequestHeader("Authorization") String authHeader) throws IOException {
+
+
+        System.out.println(authHeader);
+
+        String encoded = authHeader.substring(6);
+
+        System.out.println(encoded);
+
+        byte[] decoded = Base64.getDecoder().decode(encoded);
+
+        System.out.println(Arrays.toString(decoded));
+
+        String decodedString = new String(decoded, StandardCharsets.UTF_8);
+
+        System.out.println(decodedString);
+
+
+        //assumes api key and version do not have semicolons in them
+        String[] apiInfo = decodedString.split(":");
+
+        API api = new API(apiInfo[0], apiInfo[1]);
+
+        return interactor.getBestIntents(api);
     }
 
     @GetMapping("/threeIntents") // Returns the top three intents to be added to the front end
