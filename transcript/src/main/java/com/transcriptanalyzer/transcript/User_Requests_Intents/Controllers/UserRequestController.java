@@ -58,7 +58,7 @@ public class UserRequestController{
         return interactor.getTranscriptData();
     }
 
-    @GetMapping("/cleanTranscript/api") // Returns an arraylist of all cleaned transcripts from voiceflow API
+    @PostMapping("/cleanTranscript/api") // Returns an arraylist of all cleaned transcripts from voiceflow API
     public ArrayList<ArrayList<ArrayList<String>>>  getTranscriptData_2(@RequestBody API api) throws IOException {
         List<API> apiList = interactor.getAPIList();
         API UserApi = apiList.get(0);
