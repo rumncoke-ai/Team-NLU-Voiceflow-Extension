@@ -23,13 +23,13 @@ public class getToken {
     public static String login(String email, String password) throws IOException {
         URL urlGetToken = new URL("https://api.voiceflow.com/session");
 
-        JsonObject user = getJsonObject(email, password);
+        JsonObject user = getJsonUser(email, password);
 
         JsonObject device = getJsonDevice();
 
         JsonObject payload = getJsonPayload(user, device);
 
-        HttpURLConnection con = getHttpURLConnection(urlGetToken);
+        HttpURLConnection con = setHttpURLConnection(urlGetToken);
 
         // Here we are writing to the connection using the payload Json Object
         try(OutputStream os = con.getOutputStream()) {
@@ -58,7 +58,7 @@ public class getToken {
 
      // Helper functions for getToken
     @NotNull
-    private static HttpURLConnection getHttpURLConnection(URL urlGetToken) throws IOException {
+    private static HttpURLConnection setHttpURLConnection(URL urlGetToken) throws IOException {
         // Here we open a connection to make an HTTP call to VF's API
         // Open connection using url defined on line 15
         HttpURLConnection con = (HttpURLConnection) urlGetToken.openConnection();
@@ -93,7 +93,7 @@ public class getToken {
     }
 
     @NotNull
-    private static JsonObject getJsonObject(String email, String password) {
+    private static JsonObject getJsonUser(String email, String password) {
         // Create the user Json Object that will be used in the authentication VF call using
         // the email and password passed to the login method as parameters
         JsonObject user = new JsonObject();
