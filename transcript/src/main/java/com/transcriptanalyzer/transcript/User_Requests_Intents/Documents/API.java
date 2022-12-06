@@ -1,8 +1,6 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Documents;
 
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
 public class API{
 
     private final String apiKey;
