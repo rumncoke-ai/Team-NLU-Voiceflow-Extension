@@ -7,11 +7,15 @@ import java.net.URL;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Service.getToken;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * The createBlocksVoiceflow class given user email and password and the intents chosen by the user,
+ * will create a block and add it on to theVoiceflow canvas
+ */
 @AllArgsConstructor
 @Service
 public class createBlocksVoiceflow {
@@ -28,73 +32,31 @@ public class createBlocksVoiceflow {
         String token_removed_quotations = token.substring(1, token.length()-1); // remove the extra quotations marks
         String token_with_prefix = "Bearer " + token_removed_quotations;
 
-        // Creat the URL object that will be used to establish a connection with the VF API to make the blocks
+        // Create the URL object that will be used to establish a connection with the VF API to make the blocks
         // This url depends on the diagramID of the canvas on which the user wants to create a block
         URL url = new URL("https://api.voiceflow.com/v2/diagrams/" + diagramID + "/nodes/bulk");
 
+
         // Create all the non-customizable Json Objects for the blocks we want to create
-        String textJsonString = "{'type': 'text', 'data': {'name': 'Text', 'texts': [{'id': 'pug13zlf', 'content': [{" +
-                "'children': [{'text': 'Welcome! We are glad you have chosen to use our services today. " +
-            "Please see below a list of things I can help you with. If you do not see a button for the " +
-                "help you require, click Other and input your question into the chat.'}]}]}]," +
-            "'canvasVisibility': 'preview', 'portsV2': {'byKey': {}, 'builtIn': {'next': {'type': 'next'," +
-                "'target': null, 'id': '637fe7b83de05c41eabf5dd0'}}, 'dynamic': []}}, 'nodeID': " +
-                "'637fe7b83de05c41eabf5dcf'}";
-        JsonObject textJson = (JsonObject) JsonParser.parseString(textJsonString);
+        JsonObject textJson = getTextJson();
 
-        String goToNodeJsonString = "{'type': 'goToNode', 'data': {'name': '', 'nodeID': '637fe8773de05c41eabf5ddf',"+
-                    "'diagramID': '636ad5bf6ca8dfcaff607013', 'portsV2': {'byKey': {},'builtIn': {},'dynamic': []"+
-            "}}, 'nodeID': '637fe8bf3de05c41eabf5de7'}";
-        JsonObject goToNodeJson = (JsonObject) JsonParser.parseString(goToNodeJsonString);
+        JsonObject goToNodeJson = getGoToNodeJson();
 
-        String actionJsonString = "{'type': 'actions', 'data': {'name': '', 'steps': [" +
-            "'637fe8bf3de05c41eabf5de7']}, 'nodeID': '637fe8bf3de05c41eabf5de8', 'coords': [0, 0]}";
-        JsonObject actionJson = (JsonObject) JsonParser.parseString(actionJsonString);
+        JsonObject actionJson = getActionJson();
 
-        String portsButtonsJsonString = "{'byKey': {}, 'builtIn': {'else': {'type': 'else', 'target': null," +
-                "'id': '6386914bf957e9a1bfbf36f2'}}, 'dynamic': [{'type': '', 'target': null," +
-                "'id': '6386914bf957e9a1bfbf36f1'},{'id': '6386915bf957e9a1bfbf36f8', 'type': ''," +
-                "'target': null},{'id': '63869161f957e9a1bfbf36fb', 'type': '', 'target': null}," +
-            "{'id': '63869166f957e9a1bfbf36fd', 'type': '', 'target': '638691f5f957e9a1bfbf3713', 'data': {}}]}";
-        JsonObject portsButtonsJson = (JsonObject) JsonParser.parseString(portsButtonsJsonString);
+        JsonObject portsButtonsJson = getPortsButtonsJson();
 
-        String introBlockJsonString = "{'type': 'block', 'data': {'name': 'Introductory Block', " +
-                    "'steps': ['6386916ff957e9a1bfbf36ff', '6386914bf957e9a1bfbf36f0'], " +
-            "'color': ''}, 'nodeID': '6386914bf957e9a1bfbf36f3', 'coords': [-191.74297407390645, " +
-            "-310.6756047964696]}";
-        JsonObject introBlockJson = (JsonObject) JsonParser.parseString(introBlockJsonString);
+        JsonObject introBlockJson = getIntroBlockJson();
 
-        String text2JsonString = "{'type': 'text', 'data': {'name': 'Text', 'texts': [{'id': '1h543kkk'," +
-                    "'content': [{'children': [{'text': 'Welcome! We are glad you have chosen to use our" +
-                " services today. Please see below a list of things I can help you with. " +
-                "If you do not see a button for the help you require, click Other and input your question" +
-                " into the chat.'}]}]}], 'canvasVisibility': 'preview', 'portsV2': {'byKey': {}, 'builtIn': {" +
-                "'next': {'type': 'next', 'target': null, 'id': '6386916ff957e9a1bfbf3700'}}, 'dynamic': []" +
-            "}}, 'nodeID': '6386916ff957e9a1bfbf36ff', 'coords': [-159.16636722557527, -61.172827847591066]}";
-        JsonObject text2Json = (JsonObject) JsonParser.parseString(text2JsonString);
+        JsonObject text2Json = getText2Json();
 
-        String captureBlockJsonString = "{'type': 'captureV2', 'data': {'name': 'Capture', 'intentScope': 'GLOBAL'," +
-                    "'capture': {'type': 'intent', 'intent': {'key': '', 'name': '', 'inputs': [], 'slots': [" +
-                    "{'id': '', 'dialog': {'prompt': [], 'confirm': [], 'utterances': [], 'confirmEnabled': false" +
-                    "}, 'required': true}]}}, 'noReply': null, 'noMatch': null, 'portsV2': {'byKey': {}," +
-                "'builtIn': {'next': {'type': 'next', 'target': null, 'id': '638691b1f957e9a1bfbf3704'}," +
-                    "'else': {'type': 'else', 'target': null, 'id': '638691b1f957e9a1bfbf3705'}},'dynamic': []" +
-            "}}, 'nodeID': '638691b1f957e9a1bfbf3703'}";
-        JsonObject captureBlockJson = (JsonObject) JsonParser.parseString(captureBlockJsonString);
+        JsonObject captureBlockJson = getCaptureBlockJson();
 
-        String userInputBlockJsonString = "{'type': 'block', 'data': {'name': 'User Input', 'steps': [" +
-            "'638691b1f957e9a1bfbf3703'], 'color': ''}, 'nodeID': '638691b1f957e9a1bfbf3706', 'coords': [" +
-            "-191.44885660865327, 214.14345653075856]}";
-        JsonObject userInputBlockJson = (JsonObject) JsonParser.parseString(userInputBlockJsonString);
+        JsonObject userInputBlockJson = getUserInputBlockJson();
 
-        String goToNode2JsonString = "{'type': 'goToNode', 'data': {'name': '', 'nodeID': '638691b1f957e9a1bfbf3706'," +
-                    "'diagramID': '636ad5bf6ca8dfcaff607013', 'portsV2': {'byKey': {}, 'builtIn': {}," +
-                "'dynamic': []}}, 'nodeID': '638691f5f957e9a1bfbf3712'}";
-        JsonObject goToNode2Json = (JsonObject) JsonParser.parseString(goToNode2JsonString);
+        JsonObject goToNode2Json = getGoToNode2Json();
 
-        String action2JsonString = "{'type': 'actions', 'data': {'name': '', 'steps': [" +
-            "'638691f5f957e9a1bfbf3712']}, 'nodeID': '638691f5f957e9a1bfbf3713', 'coords': [0, 0]}";
-        JsonObject action2Json = (JsonObject) JsonParser.parseString(action2JsonString);
+        JsonObject action2Json = getAction2Json();
 
 
         // Create the "buttons" Json Array that will contain the information for the 4 buttons we want to create
@@ -185,10 +147,101 @@ public class createBlocksVoiceflow {
     }
 
 
-        public static void main(String[] args) throws IOException {
-            add_block("molly.plunkett@mail.utoronto.ca",
-                    "TLICKMMR2022",
-                    "636ad5bf6ca8dfcaff607013",
-                    "Order pizza", "Order spicy pizza", "Get a refund");
+
+
+    /** The following functions are helper methods that create the non-customizable Json Objects
+     *  for the blocks we want to create.*/
+
+    private static JsonObject getAction2Json() {
+        String action2JsonString = "{'type': 'actions', 'data': {'name': '', 'steps': [" +
+                "'638691f5f957e9a1bfbf3712']}, 'nodeID': '638691f5f957e9a1bfbf3713', 'coords': [0, 0]}";
+        JsonObject action2Json = (JsonObject) JsonParser.parseString(action2JsonString);
+        return action2Json;
+    }
+
+    private static JsonObject getGoToNode2Json() {
+        String goToNode2JsonString = "{'type': 'goToNode', 'data': {'name': '', 'nodeID': '638691b1f957e9a1bfbf3706'," +
+                "'diagramID': '636ad5bf6ca8dfcaff607013', 'portsV2': {'byKey': {}, 'builtIn': {}," +
+                "'dynamic': []}}, 'nodeID': '638691f5f957e9a1bfbf3712'}";
+        JsonObject goToNode2Json = (JsonObject) JsonParser.parseString(goToNode2JsonString);
+        return goToNode2Json;
+    }
+
+    private static JsonObject getUserInputBlockJson() {
+        String userInputBlockJsonString = "{'type': 'block', 'data': {'name': 'User Input', 'steps': [" +
+                "'638691b1f957e9a1bfbf3703'], 'color': ''}, 'nodeID': '638691b1f957e9a1bfbf3706', 'coords': [" +
+                "-191.44885660865327, 214.14345653075856]}";
+        JsonObject userInputBlockJson = (JsonObject) JsonParser.parseString(userInputBlockJsonString);
+        return userInputBlockJson;
+    }
+
+    private static JsonObject getCaptureBlockJson() {
+        String captureBlockJsonString = "{'type': 'captureV2', 'data': {'name': 'Capture', 'intentScope': 'GLOBAL'," +
+                "'capture': {'type': 'intent', 'intent': {'key': '', 'name': '', 'inputs': [], 'slots': [" +
+                "{'id': '', 'dialog': {'prompt': [], 'confirm': [], 'utterances': [], 'confirmEnabled': false" +
+                "}, 'required': true}]}}, 'noReply': null, 'noMatch': null, 'portsV2': {'byKey': {}," +
+                "'builtIn': {'next': {'type': 'next', 'target': null, 'id': '638691b1f957e9a1bfbf3704'}," +
+                "'else': {'type': 'else', 'target': null, 'id': '638691b1f957e9a1bfbf3705'}},'dynamic': []" +
+                "}}, 'nodeID': '638691b1f957e9a1bfbf3703'}";
+        JsonObject captureBlockJson = (JsonObject) JsonParser.parseString(captureBlockJsonString);
+        return captureBlockJson;
+    }
+
+    private static JsonObject getText2Json() {
+        String text2JsonString = "{'type': 'text', 'data': {'name': 'Text', 'texts': [{'id': '1h543kkk'," +
+                "'content': [{'children': [{'text': 'Welcome! We are glad you have chosen to use our" +
+                " services today. Please see below a list of things I can help you with. " +
+                "If you do not see a button for the help you require, click Other and input your question" +
+                " into the chat.'}]}]}], 'canvasVisibility': 'preview', 'portsV2': {'byKey': {}, 'builtIn': {" +
+                "'next': {'type': 'next', 'target': null, 'id': '6386916ff957e9a1bfbf3700'}}, 'dynamic': []" +
+                "}}, 'nodeID': '6386916ff957e9a1bfbf36ff', 'coords': [-159.16636722557527, -61.172827847591066]}";
+        JsonObject text2Json = (JsonObject) JsonParser.parseString(text2JsonString);
+        return text2Json;
+    }
+
+    private static JsonObject getIntroBlockJson() {
+        String introBlockJsonString = "{'type': 'block', 'data': {'name': 'Introductory Block', " +
+                "'steps': ['6386916ff957e9a1bfbf36ff', '6386914bf957e9a1bfbf36f0'], " +
+                "'color': ''}, 'nodeID': '6386914bf957e9a1bfbf36f3', 'coords': [-191.74297407390645, " +
+                "-310.6756047964696]}";
+        JsonObject introBlockJson = (JsonObject) JsonParser.parseString(introBlockJsonString);
+        return introBlockJson;
+    }
+
+    private static JsonObject getPortsButtonsJson() {
+        String portsButtonsJsonString = "{'byKey': {}, 'builtIn': {'else': {'type': 'else', 'target': null," +
+                "'id': '6386914bf957e9a1bfbf36f2'}}, 'dynamic': [{'type': '', 'target': null," +
+                "'id': '6386914bf957e9a1bfbf36f1'},{'id': '6386915bf957e9a1bfbf36f8', 'type': ''," +
+                "'target': null},{'id': '63869161f957e9a1bfbf36fb', 'type': '', 'target': null}," +
+                "{'id': '63869166f957e9a1bfbf36fd', 'type': '', 'target': '638691f5f957e9a1bfbf3713', 'data': {}}]}";
+        JsonObject portsButtonsJson = (JsonObject) JsonParser.parseString(portsButtonsJsonString);
+        return portsButtonsJson;
+    }
+
+    private static JsonObject getActionJson() {
+        String actionJsonString = "{'type': 'actions', 'data': {'name': '', 'steps': [" +
+                "'637fe8bf3de05c41eabf5de7']}, 'nodeID': '637fe8bf3de05c41eabf5de8', 'coords': [0, 0]}";
+        JsonObject actionJson = (JsonObject) JsonParser.parseString(actionJsonString);
+        return actionJson;
+    }
+
+    private static JsonObject getGoToNodeJson() {
+        String goToNodeJsonString = "{'type': 'goToNode', 'data': {'name': '', 'nodeID': '637fe8773de05c41eabf5ddf',"+
+                "'diagramID': '636ad5bf6ca8dfcaff607013', 'portsV2': {'byKey': {},'builtIn': {},'dynamic': []"+
+                "}}, 'nodeID': '637fe8bf3de05c41eabf5de7'}";
+        JsonObject goToNodeJson = (JsonObject) JsonParser.parseString(goToNodeJsonString);
+        return goToNodeJson;
+    }
+
+    private static JsonObject getTextJson() {
+        String textJsonString = "{'type': 'text', 'data': {'name': 'Text', 'texts': [{'id': 'pug13zlf', 'content': [{" +
+                "'children': [{'text': 'Welcome! We are glad you have chosen to use our services today. " +
+                "Please see below a list of things I can help you with. If you do not see a button for the " +
+                "help you require, click Other and input your question into the chat.'}]}]}]," +
+                "'canvasVisibility': 'preview', 'portsV2': {'byKey': {}, 'builtIn': {'next': {'type': 'next'," +
+                "'target': null, 'id': '637fe7b83de05c41eabf5dd0'}}, 'dynamic': []}}, 'nodeID': " +
+                "'637fe7b83de05c41eabf5dcf'}";
+        JsonObject textJson = (JsonObject) JsonParser.parseString(textJsonString);
+        return textJson;
     }
 }

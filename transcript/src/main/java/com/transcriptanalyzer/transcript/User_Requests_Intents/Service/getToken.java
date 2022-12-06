@@ -2,6 +2,7 @@ package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -11,40 +12,24 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+
+/**
+ * The getToken class given user email and password will create the authorization token used to add blocks on to the
+ * Voiceflow canvas
+ */
 @Service
 public class getToken {
 
     public static String login(String email, String password) throws IOException {
         URL urlGetToken = new URL("https://api.voiceflow.com/session");
 
-        // Create the user Json Object that will be used in the authentication VF call using
-        // the email and password passed to the login method as parameters
-        JsonObject user = new JsonObject();
-        user.addProperty("email", email);
-        user.addProperty("password", password);
+        JsonObject user = getJsonObject(email, password);
 
-        // Create the device Json Object that will be used in the authentication VF call
-        // This object does not depend on the user, so I have created it with set values
-        JsonObject device = new JsonObject();
-        device.addProperty("os", "macOS");
-        device.addProperty("version", "12.6");
-        device.addProperty("browser", "chrome");
-        device.addProperty("platform", "desktop");
+        JsonObject device = getJsonDevice();
 
-        // Create the payload object that combines the user and device Json Objects
-        // This will be passed over the connection created below to VF's API to
-        // authenticate that a user is allowed to make this call
-        JsonObject payload = new JsonObject();
-        payload.add("user", user);
-        payload.add("device", device);
+        JsonObject payload = getJsonPayload(user, device);
 
-        // Here we open a connection to make an HTTP call to VF's API
-        // Open connection using url defined on line 15
-        HttpURLConnection con = (HttpURLConnection) urlGetToken.openConnection();
-        con.setRequestMethod("PUT"); // Authentication requires a PUT request
-        con.setRequestProperty("Content-type", "application/json"); // Type passed to VF is json
-        con.setRequestProperty("Accept", "application/json"); // Type received from VF is json
-        con.setDoOutput(true); // This allows us to receive an output from the VF API call
+        HttpURLConnection con = getHttpURLConnection(urlGetToken);
 
         // Here we are writing to the connection using the payload Json Object
         try(OutputStream os = con.getOutputStream()) {
@@ -70,8 +55,51 @@ public class getToken {
             }
         }
 
-    public static void main(String[] args) throws IOException {
-        System.out.println(login("molly.plunkett@mail.utoronto.ca", "TLICKMMR2022"));
 
+     // Helper functions for getToken
+    @NotNull
+    private static HttpURLConnection getHttpURLConnection(URL urlGetToken) throws IOException {
+        // Here we open a connection to make an HTTP call to VF's API
+        // Open connection using url defined on line 15
+        HttpURLConnection con = (HttpURLConnection) urlGetToken.openConnection();
+        con.setRequestMethod("PUT"); // Authentication requires a PUT request
+        con.setRequestProperty("Content-type", "application/json"); // Type passed to VF is json
+        con.setRequestProperty("Accept", "application/json"); // Type received from VF is json
+        con.setDoOutput(true); // This allows us to receive an output from the VF API call
+        return con;
     }
+
+    @NotNull
+    private static JsonObject getJsonPayload(JsonObject user, JsonObject device) {
+        // Create the payload object that combines the user and device Json Objects
+        // This will be passed over the connection created below to VF's API to
+        // authenticate that a user is allowed to make this call
+        JsonObject payload = new JsonObject();
+        payload.add("user", user);
+        payload.add("device", device);
+        return payload;
+    }
+
+    @NotNull
+    private static JsonObject getJsonDevice() {
+        // Create the device Json Object that will be used in the authentication VF call
+        // This object does not depend on the user, so I have created it with set values
+        JsonObject device = new JsonObject();
+        device.addProperty("os", "macOS");
+        device.addProperty("version", "12.6");
+        device.addProperty("browser", "chrome");
+        device.addProperty("platform", "desktop");
+        return device;
+    }
+
+    @NotNull
+    private static JsonObject getJsonObject(String email, String password) {
+        // Create the user Json Object that will be used in the authentication VF call using
+        // the email and password passed to the login method as parameters
+        JsonObject user = new JsonObject();
+        user.addProperty("email", email);
+        user.addProperty("password", password);
+        return user;
+    }
+
 }

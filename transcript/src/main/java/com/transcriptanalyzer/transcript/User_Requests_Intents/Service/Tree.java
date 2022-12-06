@@ -4,26 +4,32 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
-Tree data structure used to organize intents coming from nested arraylists of transcripts
-Includes methods to extract the best (the highest occurrence) intents from the entire tree,
-and also the best intents from just the leaf nodes
-*/
+/**
+ * The Tree class deals with representing transcript data in a Tree data structure
+ * which is used to organize intents
+ *
+ * Includes methods to extract the best (the highest occurrence) intents from the entire tree,
+ * and also the best intents from just the leaf nodes
+ */
 @Service
 public class Tree {
+
+    // Dependeny: Node class; Used to represent chatbot intents as tree nodes
     private Node treeRootNode;
+
+
+    // Intents organized in order of their turn in their respective transcript
+    // NOTE: A turn is represented by a message intent pair)
     private HashMap<String, Integer> counts;
 
-    // class for tree representing intents as it's nodes
-    // intents organized in order of their turn in their respective transcript
     public Tree(ArrayList<ArrayList<ArrayList<String>>> transcripts) {
-        // root of tree
         this.treeRootNode = new Node("Insufficient Data");
         Node start = this.treeRootNode;
         this.counts = new HashMap<String, Integer>();
 
-        // go through each transcript, then each turn (representing each message intent pair)
+        // Parse through each transcript followed by each turn
         // and add it as a subIntent node of the treeNode, then update treeNode down
+
         for (ArrayList<ArrayList<String>> transcript : transcripts) {
             for (ArrayList<String> turn : transcript) {
                 if (turn.size() == 2) {
@@ -37,15 +43,16 @@ public class Tree {
                     }
                 }
             }
-            // at the end of each transcript bring treeNode back to top
+            // At the end of each transcript bring treeNode back to top
             this.treeRootNode = start;
         }
     }
 
-    // class for each individual intent
+    // Class for each individual intent
     public static class Node {
         private final String intent;
-        // # of number it has appeared in its respective turn
+
+        // Number of occurrences for the intent
         private int occurrences;
         private ArrayList<Node> children;
 
@@ -56,22 +63,22 @@ public class Tree {
         }
 
         public Node addSubIntent(String intent) {
-            // if the intent already exists as a child of the parent node
+            // If the intent already exists as a child of the parent node then increment the occurences by 1
             if (this.hasChild(intent) != null) {
                 Node node = this.hasChild(intent);
-                // increment occurrences of this node
                 node.occurrences += 1;
                 return node;
-                // if the intent is not a child of the node
-            } else {
-                // create the new node and add it as a child of the parent node
+
+            }
+            // If the intent is not a child of the node create the new node and add it as a child of the parent node
+            else {
                 Node newChildNode = new Node(intent);
                 this.children.add(newChildNode);
                 return newChildNode;
             }
         }
 
-        // return subNode if it matches intent, o.w return None
+        // Return subNode if it matches intent, otherwise return None
         public Node hasChild(String intent){
             for (Node child : this.children) {
                 if (Objects.equals(intent, child.intent)) {
@@ -81,7 +88,7 @@ public class Tree {
             return null;
         }
 
-        // helper methods for determining best leaf nodes (highest occurrences)
+        // Helper methods for determining best leaf nodes (highest occurrences)
         public LinkedHashMap<String, Integer> mergeLeafData(LinkedHashMap<String, Integer> leafData){
             // for each child, get its best leaf data and merge it all into leafData
             for (Node child: this.children) {
@@ -100,22 +107,17 @@ public class Tree {
         }
 
         public LinkedHashMap<String, Integer> organizeBestChildren(int last_index, List<Map.Entry<String, Integer>> leafDataEntries, LinkedHashMap<String, Integer> bestLeafData){
-            // for each index of the entries we want
+            // For each index of the entries we want directly extract the key and value at that index and
+            // put the extracted key value pair into the new sorted map.
             for (int i = 0; i <= last_index; i++) {
-                // directly extract the key and value at that index
                 String key = leafDataEntries.get(i).getKey();
                 Integer value = leafDataEntries.get(i).getValue();
-
-                // put them into the new sorted map. Has 0 to 3 values in it. In the context of our problem,
-                // should have 1 to 3.
-                // we can put instead of merging without overwriting because we know the entries in leafDataEntries
-                // are unique; they were created by merging entries.
                 bestLeafData.put(key, value);
             }
             return bestLeafData;
         }
 
-        // return a hashmap mapping the 3 leaf intents with most occurrences to their occurrences in descending order
+        // Return a hashmap mapping the 3 leaf intents with most occurrences to their occurrences in descending order
         public LinkedHashMap<String, Integer> getBestLeafData() {
             // create a list for the best leaf data of all children
             LinkedHashMap<String, Integer> leafData = new LinkedHashMap<>();
@@ -146,7 +148,7 @@ public class Tree {
         }
     }
 
-    // get a list of the three nodes with the greatest occurrences sorted in decreasing order
+    // Get a list of the three nodes with the greatest occurrences sorted in decreasing order
     public ArrayList<String> getBestTreeIntents(){
         // compares each value and get the top 3, return key list attributed to these top 3
         List<String> treeIntentsList = this.counts.entrySet().stream().sorted(
@@ -158,7 +160,7 @@ public class Tree {
 
     }
 
-    //martin: create top 3 for leaves
+    //Finds top 3 leaf leaves
     public ArrayList<String> getBestLeafIntents() {
         // get a hash map that is mapping intent to occurrences of the highest occurring intents of all leaves.
         // in descending order.
@@ -168,7 +170,7 @@ public class Tree {
         return fillArrayList(new ArrayList<>(bestLeafData.keySet()));
     }
 
-    // get both sets of the top 3 intents
+    //Get both sets of the top 3 intents
     public ArrayList<ArrayList<String>> getBestIntents(){
         ArrayList<ArrayList<String>> options = new ArrayList<>(2);
         options.add(this.getBestTreeIntents());

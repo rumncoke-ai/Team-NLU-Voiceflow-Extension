@@ -1,53 +1,42 @@
 package com.transcriptanalyzer.transcript.User_Requests_Intents.Service;
 
 import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.API;
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.Account;
-import com.transcriptanalyzer.transcript.User_Requests_Intents.Documents.UserInfo;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
+
+/**
+ * UserRequestInteractor class contains all important methods that may be needed for HTTP requests in the controller
+ *
+ * */
 @AllArgsConstructor
 @Service
 public class UserRequestInteractor {
-    /**
-     * UserRequestInteractor class contains all important methods that may be needed for HTTP requests in the controller
-     *
-     * */
 
-
-    // Creates Instances of the transcript service and user service class to access methods
-    @Autowired
-    private UserService userService;
-
+    // Creates Instances of tree class to access methods
     private Tree tree;
 
-    public void storeUserInfo(UserInfo user) {
-        userService.storeUserInfo(user);
-    }
 
-    public ArrayList<ArrayList<ArrayList<String>>> getTranscriptData() throws IOException {
-        return TranscriptService.getJSONContent();
-    }
 
+    /**
+     * Method getBestIntents.
+     *
+     * @param api - API info; consisting of api key and version id
+     * @return Return best intents from the transcript data linked to the API information
+     *
+     * The Data is returned in the following format:
+     *         <<Option A1, Option A2, Option A3>,<Option B1, Option B2, Option B3>>
+     *
+     *          Where option A deal with a general analysis of the transcript data and
+     *          option B finds most common occurences within the leaf nodes of the tree
+     *          representation of the tree data
+     */
     public ArrayList<ArrayList<String>> getBestIntents(API api) throws IOException {
         Tree intentTree = new Tree(TranscriptService.getJSONContent_2(api));
         return intentTree.getBestIntents();
     }
 
-    public void deleteAll() {
-        userService.deleteAll();
-    }
-
-    public List<API> getAPIList() {
-        return userService.getAPIList();
-    }
-
-
-    public ArrayList<ArrayList<ArrayList<String>>> getTranscriptData_2(API api) throws IOException {
-        return TranscriptService.getJSONContent_2(api);
-    }
 }
