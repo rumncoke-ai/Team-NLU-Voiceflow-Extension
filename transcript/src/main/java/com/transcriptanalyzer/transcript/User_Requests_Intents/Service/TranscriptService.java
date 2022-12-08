@@ -35,26 +35,26 @@ public class TranscriptService {
 
 //      Define the url to call to access the chatbot API.
 
-        String apiKey = api.getApiKey();
-        String version = api.getApiVersion();
+            String apiKey = api.getApiKey();
+            String version = api.getApiVersion();
 
-        String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
+            String urlString = "https://api-dm-test.voiceflow.fr/exportraw/" + apiKey + "?versionID=" + version;
 
-        URL url = new URL(urlString);
+            URL url = new URL(urlString);
 
 
 //      Return the result of the API call (i.e., all the stored transcripts) as one long string in JSON format.
-        String jsonString = retrieveJsonString(url);
+            String jsonString = retrieveJsonString(url);
 
 //      Parse the API return string to form a JsonArray
-        JsonArray dataArr = new Gson().fromJson(jsonString, JsonArray.class);
+            JsonArray dataArr = new Gson().fromJson(jsonString, JsonArray.class);
 
 //      Define the object which will contain all of the seperated turns
-        ArrayList<ArrayList<ArrayList<String>>> finalParseResults = new ArrayList<>();
+            ArrayList<ArrayList<ArrayList<String>>> finalParseResults = new ArrayList<>();
 
-        flowIterator2(finalParseResults, dataArr);
+            flowIterator2(finalParseResults, dataArr);
 
-        return finalMerge(finalParseResults);
+            return finalMerge(finalParseResults);
     }
 
 
